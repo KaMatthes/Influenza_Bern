@@ -14,12 +14,23 @@ data_b <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
          District=Amtsbezirk,
          BEZ_ID = Bezirksnummer,
          Municipality =  Gemeinde3) %>%
-  mutate(Municipality = recode("St. Beatenberg" ="Beatenberg",
+  mutate(Municipality = recode(Municipality,"St. Beatenberg" ="Beatenberg",
                                "St. Imier" ="St-Imier",
                                "Gündlischwand"="Gründlischwand",
-                               "Tramelan-dessus" = "Tramelan"))
+                               "Tramelan-dessus" = "Tramelan",
+                               "Meirisberg" = "Meinisberg",
+                               "Martiswil" = "Madiswil",
+                               "Musligen" = "Merzligen",
+                               "Mettstetten" = "Mattstetten",
+                               "Seehof" = "Seedorf",
+                               "Tramelan-dessous" = "Tramelan",
+                               "Les Genevez" = "Genevez",
+                               "Delsberg" = "Delémont",
+                               "Tüscherz-Alfermée" = "Tüscherz",
+                               "St. Ursanne" = "St-Ursanne",
+                               "St. Brais" = "St-Brais"
+                               )) %>%
   select(-Monat, -Day_early) %>%
-  left_join(data_mun_id) %>%
-  distinct(Municipality, .keep_all = TRUE)
+  left_join(data_mun_id) 
   
 write.table(data_b,file=paste0("data/data_test.csv"),row.names=FALSE, sep=";")
