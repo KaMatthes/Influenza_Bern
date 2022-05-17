@@ -1,20 +1,26 @@
-data_s <-read.xlsx("data_raw/Daten_SpanischeGrippe.xlsx",detectDates = TRUE) %>%
-  select(Year,Med_DIN_Week,NumbCases=NumbCasesAdjust2,GEM_ID, Municipality=PlaceOrig,GEM_ID,District, BEZ_ID)
+gemeinde <- read.xlsx("data_raw/Daten_SpanischeGrippe.xlsx",detectDates = TRUE, sheet="Gemeinden") %>%
+  select(GEM_ID, Gemeinde_Name, Bez_Name, Bez_ID, Region_ID, Region_Name, E, N, Population =Wohnb)
+  
 
-data_mun_id <- data_s %>%
-  select(GEM_ID, Municipality)
 
-data_b <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
+data_s <-read.xlsx("data_raw/Daten_SpanischeGrippe.xlsx",detectDates = TRUE, sheet="Data") %>%
+  mutate(Disease = ifelse(Disease=="influenza", "Influenza", Disease)) %>%
+  filter(Disease=="Influenza") %>%
+  select(Year,Med_DIN_Week,NumbCases=NumbCasesAdjust2,GEM_ID,Gemeinde_Name="Place_korr") %>%
+  group_by(Year,Med_DIN_Week,GEM_ID,Gemeinde_Name) %>%
+  mutate(NumbCases = sum(NumbCases)) %>%
+  distinct(Year, Med_DIN_Week, GEM_ID, .keep_all = TRUE) %>%
+  ungroup() 
+
+data_bern <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
   mutate(Krankheit2 = ifelse(Krankheit2=="influenza", "Influenza", Krankheit2)) %>%
   filter(Krankheit2=="Influenza") %>%
-  select(Jahr, Monat, Day_early, Anzahl3,Amtsbezirk, Bezirksnummer, Gemeinde3) %>%
+  select(Jahr, Monat, Day_early, Anzahl3, Gemeinde3) %>%
   mutate(Med_DIN_Week = paste0(Jahr,"_",isoweek(Day_early ))) %>%
   rename(Year=Jahr,
          NumbCases=Anzahl3,
-         District=Amtsbezirk,
-         BEZ_ID = Bezirksnummer,
-         Municipality =  Gemeinde3) %>%
-  mutate(Municipality = recode(Municipality,"St. Beatenberg" ="Beatenberg",
+         Gemeinde_Name =  Gemeinde3) %>%
+  mutate( Gemeinde_Name = recode( Gemeinde_Name,"St. Beatenberg" ="Beatenberg",
                                "St. Imier" ="St-Imier",
                                "Gündlischwand"="Gründlischwand",
                                "Tramelan-dessus" = "Tramelan",
@@ -23,14 +29,45 @@ data_b <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
                                "Musligen" = "Merzligen",
                                "Mettstetten" = "Mattstetten",
                                "Seehof" = "Seedorf",
+                               "Büren" = "Büren an der Aare",
+                               "Büren z. Hof" = "Büren zum Hof",
                                "Tramelan-dessous" = "Tramelan",
                                "Les Genevez" = "Genevez",
                                "Delsberg" = "Delémont",
                                "Tüscherz-Alfermée" = "Tüscherz",
                                "St. Ursanne" = "St-Ursanne",
-                               "St. Brais" = "St-Brais"
-                               )) %>%
+                               "St. Brais" = "St-Brais",
+                               "Tort" = "Port",
+                               "Niderwahlern" = "Niedermuhlern",
+                               "Thurnen" = "Kirchenthurnen",
+                               "Valbirse" = "Malleray",
+                               "Haute-Sorne" = "Bassecourt",
+                               "Wichtrach" = "Niederwichtrach",
+                               "Teuffenthal" = "Unterlangenegg",
+                               "Montignez" = "Courtedoux",
+                               "Sutz" = "Sutz-Lattrigen",
+                               "Hasliberg" = "Hasleberg",
+                               "Wiler" = "Wiler bei Utzenstorf",
+                               "Les Enfers" = "Enfers",
+                               "Walliswil" = "Walliswil b. Wangen")) %>%
   select(-Monat, -Day_early) %>%
-  left_join(data_mun_id) 
-  
-write.table(data_b,file=paste0("data/data_test.csv"),row.names=FALSE, sep=";")
+  full_join(gemeinde[,c("Gemeinde_Name", "GEM_ID")] )  %>%
+  group_by(Year,Med_DIN_Week,GEM_ID,Gemeinde_Name) %>%
+  mutate(NumbCases = sum(as.numeric(NumbCases))) %>%
+  distinct(Year, Med_DIN_Week, GEM_ID, .keep_all = TRUE) %>%
+  ungroup() %>%
+  rbind(data_s) %>%
+  filter(!is.na(GEM_ID)) %>%
+  mutate(week=as.numeric(substr(Med_DIN_Week, start = 6, stop = 7))) %>%
+  select(-Med_DIN_Week, -Gemeinde_Name) %>%
+  arrange(Year, GEM_ID, week) %>%
+  # group_by(Year,District,BEZ_ID, Municipality, GEM_ID) %>%
+  # complete(week, fill=list(n=0))
+  complete( week,  GEM_ID, nesting(Year)) %>%
+  filter(!is.na(week)) %>%
+  filter(!is.na(Year)) %>%
+  mutate(NumbCases=ifelse(is.na(NumbCases), 0, NumbCases)) %>%
+  full_join(gemeinde)
+#   
+save(data_bern ,file=paste0("data/data_bern.RData"))
+write.xlsx(data_bern,file=paste0("data/data_bern.xlsx"),row.names=FALSE, overwrite = TRUE)
