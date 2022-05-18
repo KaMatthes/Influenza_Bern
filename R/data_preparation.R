@@ -3,19 +3,20 @@ gemeinde <- read.xlsx("data_raw/Daten_SpanischeGrippe.xlsx",detectDates = TRUE, 
   
 
 
-data_s <-read.xlsx("data_raw/Daten_SpanischeGrippe.xlsx",detectDates = TRUE, sheet="Data") %>%
+data_s <-read.csv("data_raw/Data_Spanische_Grippe.csv", sep=";") %>%
   mutate(Disease = ifelse(Disease=="influenza", "Influenza", Disease)) %>%
   filter(Disease=="Influenza") %>%
-  select(Year,Med_DIN_Week,NumbCases=NumbCasesAdjust2,GEM_ID,Gemeinde_Name="Place_korr") %>%
+  select(Year,Med_DIN_Week,NumbCases=NumbCasesAdjust2,GEM_ID,Gemeinde_Name="Place_korr", Wave) %>%
   group_by(Year,Med_DIN_Week,GEM_ID,Gemeinde_Name) %>%
   mutate(NumbCases = sum(NumbCases)) %>%
   distinct(Year, Med_DIN_Week, GEM_ID, .keep_all = TRUE) %>%
   ungroup() 
 
 data_bern <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
-  mutate(Krankheit2 = ifelse(Krankheit2=="influenza", "Influenza", Krankheit2)) %>%
+  mutate(Krankheit2 = ifelse(Krankheit2=="influenza", "Influenza", Krankheit2),
+         Wave = NA) %>%
   filter(Krankheit2=="Influenza") %>%
-  select(Jahr, Monat, Day_early, Anzahl3, Gemeinde3) %>%
+  select(Jahr, Monat, Day_early, Anzahl3, Gemeinde3, Wave) %>%
   mutate(Med_DIN_Week = paste0(Jahr,"_",isoweek(Day_early ))) %>%
   rename(Year=Jahr,
          NumbCases=Anzahl3,
@@ -40,11 +41,11 @@ data_bern <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
                                "Tort" = "Port",
                                "Niderwahlern" = "Niedermuhlern",
                                "Thurnen" = "Kirchenthurnen",
-                               "Valbirse" = "Malleray",
+                               "Valbirse" = "Bévilard",
                                "Haute-Sorne" = "Bassecourt",
                                "Wichtrach" = "Niederwichtrach",
                                "Teuffenthal" = "Unterlangenegg",
-                               "Montignez" = "Courtedoux",
+                               "Montignez" = "Buix",
                                "Sutz" = "Sutz-Lattrigen",
                                "Hasliberg" = "Hasleberg",
                                "Wiler" = "Wiler bei Utzenstorf",
@@ -63,7 +64,7 @@ data_bern <-read.xlsx("data_raw/Influenza_Bern.xlsx",detectDates = TRUE) %>%
   arrange(Year, GEM_ID, week) %>%
   # group_by(Year,District,BEZ_ID, Municipality, GEM_ID) %>%
   # complete(week, fill=list(n=0))
-  complete( week,  GEM_ID, nesting(Year)) %>%
+  complete( week,  GEM_ID, nesting(Year, Wave)) %>%
   filter(!is.na(week)) %>%
   filter(!is.na(Year)) %>%
   mutate(NumbCases=ifelse(is.na(NumbCases), 0, NumbCases)) %>%

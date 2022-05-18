@@ -29,6 +29,6 @@ library(colorspace)
 library(viridis)
 library(RColorBrewer)
 
-
+no_classes_map <- 5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
 col8viridis <- viridis(8, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
