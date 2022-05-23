@@ -1,9 +1,16 @@
 function_hotspot <- function(Wave_Inf) {
-  load("data/fitted_values_1.RData")
+  # load("data/fitted_values_1.RData")
+  # fitted_values_1 <- mean.samples
+  # load("data/fitted_values_2.RData")
+  # fitted_values_2<- mean.samples
+  # load("data/fitted_values_3.RData")
+  # fitted_values_3 <- mean.samples
+  
+  load("../data/fitted_values_1.RData")
   fitted_values_1 <- mean.samples
-  load("data/fitted_values_2.RData")
+  load("../data/fitted_values_2.RData")
   fitted_values_2<- mean.samples
-  load("data/fitted_values_3.RData")
+  load("../data/fitted_values_3.RData")
   fitted_values_3 <- mean.samples
   
   mean.samples <- rbind(fitted_values_1, fitted_values_2, fitted_values_3) %>%
@@ -16,7 +23,7 @@ function_hotspot <- function(Wave_Inf) {
     filter(Wave == Wave_Inf)
 
 # sf::sf_use_s2(TRUE)
-  bezirk_geo <- read_sf("data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+  bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
     mutate(GEM_ID = ifelse(Gemeinde=="MATTEN BEI INTERLAKEN", "243", GEM_ID)) %>%
     filter(!is.na(GEM_ID)) %>%
     mutate(GEM_ID = as.character(GEM_ID)) %>%

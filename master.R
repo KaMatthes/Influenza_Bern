@@ -28,7 +28,28 @@ library(maptools)
 library(colorspace)
 library(viridis)
 library(RColorBrewer)
+library(tsoutliers)
 
-no_classes_map <- 5
+no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
 col8viridis <- viridis(8, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
+
+
+size_axis <-20
+strip_text <- 20
+size_axis_title <- 20
+lwd_size_stillbirth <- 5
+lwd_size <- 0.8
+pch_type <- 19
+lwdline <- 1
+size_legend <- 15
+size_legend_title<- 15
+pd <-position_dodge(width=0.8)
+plot_title <- 25
+
+# load R sources
+
+source("R/maps_wave_fitted.R")
+source("R/Hotspots_wave.R")
+
+render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))

@@ -1,0 +1,82 @@
+---
+title: "Influenza Bern"
+author: "Katarina Matthes"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Methods
+* Bayesian approach
+* INLA (Bayesian inference for Latent Gaussian Models)
+* Influenza cases for $475$ municipalities of canton of Bern for years 1918 - 1926
+* Data $Y$ is given as the total number of influenza in fixed municipalities and in each year
+* Standard Poisson likelihood to model the counts $$ y_i \mid \eta_i\sim Po\left(E_i \exp(\eta_i)\right),$$
+where $E_i$ is the ``population at risk'' in municipality $i$.
+<br />
+<br />
+* classical disease mapping model; BYM model (Besag, York and Mollie proposed it)
+* The log relative risk, $\bf{\eta} = (\eta_1, \dots, \eta_n)^T$, is thus decomposed
+  into $$\bf{\eta} = \mu + \bf{u} + \bf{v} $$
+  +  $\mu$ is the overall intercept
+  +  $\bf{u}$ is a random effect with spatial structure following the Besag model
+  +  $\bf{v}$ represents a non-spatial overdispersion
+* ${\bf u}$ is "besag" modelled spatially structured with smoothing parameter $\kappa_u$.
+* ${\bf v}$ is unstructured with precision parameter $\kappa_v$, i.e.
+$\bf{v} \sim \mathcal{N}(0, \kappa_v^{-1}I)$.
+* The precision terms $\kappa_v$ and $\kappa_u$ are assigned the default
+gamma prior distributions of INLA
+$$
+\begin{aligned}
+  \kappa_u & \sim \textrm{Gamma}( \alpha_u, \beta_u ), \\
+  \kappa_v & \sim \textrm{Gamma}( \alpha_v, \beta_v ).
+\end{aligned}
+$$
+* The default values are $\alpha_u = \alpha_v = 1$ and $\beta_u = \beta_v = 0.00005$.
+<br />
+<br />
+
+```{r, echo=TRUE,message=FALSE, eval=FALSE}
+formula <- Num ~ 1 + offset(log(Population)) +
+  f(Region, model="bym", graph="Gemeinde_Inla", scale.model = TRUE)
+
+ inla.mod <- inla(formula,
+                   data=dat.bern,
+                   family = "zeroinflatednbinomial0",
+                   control.family = control.family,
+                   control.compute = list(config = TRUE),
+                   control.mode = list(restart = TRUE),
+                   control.predictor = list(compute = TRUE, link = 1))
+```
+
+* 1000 samples from the posterior distribution
+
+# Spanish flu
+
+## Maps
+Fitted values
+
+```{r, echo=FALSE,message=FALSE,fig.height = 8,  fig.width = 10}
+function_maps_wave(Wave_Inf=1)
+function_maps_wave(Wave_Inf=2)
+function_maps_wave(Wave_Inf=3)
+```
+
+## Hotspot
+Fitted values
+
+```{r, echo=FALSE,message=FALSE,fig.height = 8,  fig.width = 10}
+function_hotspot(Wave_Inf=1)
+function_hotspot(Wave_Inf=2)
+function_hotspot(Wave_Inf=3)
+```
+
