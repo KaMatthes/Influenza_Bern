@@ -1,8 +1,8 @@
-function_inla_fitted <- function(Wave_Inf){
+function_inla_fitted <- function(Wave_Inf ){
   
   # load("data/data_bern.RData")
   
-  data_bern <- read_xlsx("data/data_bern.xlsx")
+  load("data/data_bern_wave.RData")
 
   
   nc.sids  <- sf::st_read("data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
@@ -21,17 +21,18 @@ function_inla_fitted <- function(Wave_Inf){
     mutate(Region = 1:475) 
   
   
-  dat.bern <- data_bern %>%
+  dat.bern <- data_bern_wave%>%
     ungroup() %>%
     as.data.frame() %>%
-    mutate(Year= as.numeric(Year),
+    mutate(
       GEM_ID=as.character(GEM_ID)) %>%
     full_join(gemeinde.names) %>%
-    filter(Year<1920) %>%
     filter(Wave == Wave_Inf) %>%
-    dplyr::group_by(Year, GEM_ID, Population, Region, Wave) %>%
+    dplyr::group_by( GEM_ID, Population, Region, Wave) %>%
     summarise(Num = sum(NumbCases)) %>%
-    ungroup()
+    ungroup() %>%
+    filter(!is.na(Region))
+  # 
   # 
   # obs <- dat.bern %>%
   #   select(Year, GEM_ID, Num, Population) %>%
@@ -60,6 +61,21 @@ function_inla_fitted <- function(Wave_Inf){
                    # num.threads = round(parallel::detectCores() * .2),
                    control.predictor = list(compute = TRUE, link = 1))
 
+  
+  tmarg <- function(marginals) {
+    post.means <- mclapply(marginals, function (marg) {
+      # Transform post. marginals
+      aux <- inla.tmarginal(exp, marg)
+      # Compute posterior mean
+      inla.emarginal(function(x) x, aux)
+    })
+    
+    return(as.vector(unlist(post.means)))
+  }
+  
+  # Add posterior means to the SpatialPolygonsDataFrame
+  
+  inla.mod$IID <- tmarg(inla.mod$marginals.fitted.values)
   
   # dat.bern$LER <- inla.tmarginal(inla.mod$marginals.fitted.values)
   
@@ -96,4 +112,3 @@ function_inla_fitted <- function(Wave_Inf){
 
 function_inla_fitted(Wave=1)
 function_inla_fitted(Wave=2)
-function_inla_fitted(Wave=3)

@@ -13,9 +13,7 @@ data_region <- data_bern %>%
   mutate(NumInc = NumRegion/PopRegion*1000,
          iso_week = paste0(Year,"_",week)) %>%
   arrange(Year, week) %>%
-  mutate(Region_Name = factor(Region_Name, levels = c("Biel","Bern","Thun","Jura","Seeland","Oberaargau","Mittelland Bern","Voralpen","Oberland"))) %>%
-  filter(Year >1919)
-                                                      
+  mutate(Region_Name = factor(Region_Name, levels = c("Biel","Bern","Thun","Jura","Seeland","Oberaargau","Mittelland Bern","Voralpen","Oberland")))
                                                       # %>%
 #   filter(Region_Name=="Voralpen")
 

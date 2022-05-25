@@ -2,7 +2,7 @@ function_inla_fitted <- function(Year_Inf){
   
   # load("data/data_bern.RData")
   
-  data_bern <- read_xlsx("data/data_bern.xlsx")
+  load("data/data_bern.RData")
 
   
   nc.sids  <- sf::st_read("data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
@@ -29,7 +29,8 @@ function_inla_fitted <- function(Year_Inf){
     filter(Year==Year_Inf) %>%
     dplyr::group_by(Year, GEM_ID, Population, Region) %>%
     summarise(Num = sum(NumbCases)) %>%
-    ungroup()
+    ungroup() %>%
+    filter(!is.na(Region))
   # 
   # obs <- dat.bern %>%
   #   select(Year, GEM_ID, Num, Population) %>%
@@ -43,6 +44,11 @@ function_inla_fitted <- function(Year_Inf){
     # f(week, model='rw1', constr = TRUE, scale.model = TRUE, cyclic = TRUE) +
     f(Region, model="bym", graph="Gemeinde_Inla", scale.model = TRUE)
 
+
+  # formula <- Num ~ 1  +
+  #   # f(week, model='rw1', constr = TRUE, scale.model = TRUE, cyclic = TRUE) +
+  #   f(Region, model="bym", graph="Gemeinde_Inla", scale.model = TRUE)
+
   
   set.seed(20220421)
   inla.mod <- inla(formula,
@@ -50,16 +56,20 @@ function_inla_fitted <- function(Year_Inf){
                    # family="nbinomial",
                    family = "zeroinflatednbinomial0",
                    # family = "zeroinflatednbinomial1",
-                   #verbose = TRUE,
+                   #verbose = TRUE
+                   # E=Population,
                    control.family = control.family,
-                   # control.compute = list(config = TRUE, dic=TRUE, waic=TRUE, cpo=TRUE,return.marginals.predictor=TRUE),
-                   control.compute = list(config = TRUE),
+                   control.compute = list(config = TRUE, dic=TRUE, waic=TRUE, cpo=TRUE,return.marginals.predictor=TRUE),
+                   # control.compute = list(config = TRUE),
                    control.mode = list(restart = TRUE),
                    # num.threads = round(parallel::detectCores() * .2),
                    control.predictor = list(compute = TRUE, link = 1))
 
   
   # dat.bern$LER <- inla.tmarginal(inla.mod$marginals.fitted.values)
+  
+  posterior_mean <- data.frame(posterior_mean=inla.mod$summary.random$Region[1:475, "mean"],
+                               Region=1:475)
   
   post.samples <- inla.posterior.sample(n = 1000, result = inla.mod,seed=20220421)
   predlist <- do.call(cbind, lapply(post.samples, function(X)
@@ -84,7 +94,8 @@ function_inla_fitted <- function(Year_Inf){
     # left_join(dat.bern, by=c("Region")) %>%
     left_join(  gemeinde.names ) %>%
     # left_join(obs) %>%
-    filter(!is.na(Region))
+    filter(!is.na(Region)) %>%
+    left_join(posterior_mean)
     
   write.xlsx(mean.samples,paste0("data/fitted_values",Year_Inf,".xlsx"), row.names=FALSE, overwrite = TRUE)
   save(mean.samples,file=paste0("data/fitted_values",Year_Inf,".RData"))

@@ -15,68 +15,95 @@ editor_options:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# Methods
-* Bayesian approach
-* INLA (Bayesian inference for Latent Gaussian Models)
-* Influenza cases for $475$ municipalities of canton of Bern for years 1918 - 1926
-* Data $Y$ is given as the total number of influenza in fixed municipalities and in each year
-* Standard Poisson likelihood to model the counts $$ y_i \mid \eta_i\sim Po\left(E_i \exp(\eta_i)\right),$$
-where $E_i$ is the ``population at risk'' in municipality $i$.
-<br />
-<br />
-* classical disease mapping model; BYM model (Besag, York and Mollie proposed it)
-* The log relative risk, $\bf{\eta} = (\eta_1, \dots, \eta_n)^T$, is thus decomposed
-  into $$\bf{\eta} = \mu + \bf{u} + \bf{v} $$
-  +  $\mu$ is the overall intercept
-  +  $\bf{u}$ is a random effect with spatial structure following the Besag model
-  +  $\bf{v}$ represents a non-spatial overdispersion
-* ${\bf u}$ is "besag" modelled spatially structured with smoothing parameter $\kappa_u$.
-* ${\bf v}$ is unstructured with precision parameter $\kappa_v$, i.e.
-$\bf{v} \sim \mathcal{N}(0, \kappa_v^{-1}I)$.
-* The precision terms $\kappa_v$ and $\kappa_u$ are assigned the default
-gamma prior distributions of INLA
-$$
-\begin{aligned}
-  \kappa_u & \sim \textrm{Gamma}( \alpha_u, \beta_u ), \\
-  \kappa_v & \sim \textrm{Gamma}( \alpha_v, \beta_v ).
-\end{aligned}
-$$
-* The default values are $\alpha_u = \alpha_v = 1$ and $\beta_u = \beta_v = 0.00005$.
-<br />
-<br />
+<!-- # Methods -->
+<!-- * Bayesian approach -->
+<!-- * INLA (Bayesian inference for Latent Gaussian Models) -->
+<!-- * Influenza cases for $475$ municipalities of canton of Bern for years 1918 - 1926 -->
+<!-- * Data $Y$ is given as the total number of influenza in fixed municipalities and in each year -->
+<!-- * Standard Poisson likelihood to model the counts $$ y_i \mid \eta_i\sim Po\left(E_i \exp(\eta_i)\right),$$ -->
+<!-- where $E_i$ is the ``population at risk'' in municipality $i$. -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- * classical disease mapping model; BYM model (Besag, York and Mollie proposed it) -->
+<!-- * The log relative risk, $\bf{\eta} = (\eta_1, \dots, \eta_n)^T$, is thus decomposed -->
+<!--   into $$\bf{\eta} = \mu + \bf{u} + \bf{v} $$ -->
+<!--   +  $\mu$ is the overall intercept -->
+<!--   +  $\bf{u}$ is a random effect with spatial structure following the Besag model -->
+<!--   +  $\bf{v}$ represents a non-spatial overdispersion -->
+<!-- * ${\bf u}$ is "besag" modelled spatially structured with smoothing parameter $\kappa_u$. -->
+<!-- * ${\bf v}$ is unstructured with precision parameter $\kappa_v$, i.e. -->
+<!-- $\bf{v} \sim \mathcal{N}(0, \kappa_v^{-1}I)$. -->
+<!-- * The precision terms $\kappa_v$ and $\kappa_u$ are assigned the default -->
+<!-- gamma prior distributions of INLA -->
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!--   \kappa_u & \sim \textrm{Gamma}( \alpha_u, \beta_u ), \\ -->
+<!--   \kappa_v & \sim \textrm{Gamma}( \alpha_v, \beta_v ). -->
+<!-- \end{aligned} -->
+<!-- $$ -->
+<!-- * The default values are $\alpha_u = \alpha_v = 1$ and $\beta_u = \beta_v = 0.00005$. -->
+<!-- <br /> -->
+<!-- <br /> -->
 
-```{r, echo=TRUE,message=FALSE, eval=FALSE}
-formula <- Num ~ 1 + offset(log(Population)) +
-  f(Region, model="bym", graph="Gemeinde_Inla", scale.model = TRUE)
+<!-- ```{r, echo=TRUE,message=FALSE, eval=FALSE} -->
+<!-- formula <- Num ~ 1 + offset(log(Population)) + -->
+<!--   f(Region, model="bym", graph="Gemeinde_Inla", scale.model = TRUE) -->
 
- inla.mod <- inla(formula,
-                   data=dat.bern,
-                   family = "zeroinflatednbinomial0",
-                   control.family = control.family,
-                   control.compute = list(config = TRUE),
-                   control.mode = list(restart = TRUE),
-                   control.predictor = list(compute = TRUE, link = 1))
+<!--  inla.mod <- inla(formula, -->
+<!--                    data=dat.bern, -->
+<!--                    family = "zeroinflatednbinomial0", -->
+<!--                    control.family = control.family, -->
+<!--                    control.compute = list(config = TRUE), -->
+<!--                    control.mode = list(restart = TRUE), -->
+<!--                    control.predictor = list(compute = TRUE, link = 1)) -->
+<!-- ``` -->
+
+<!-- * 1000 samples from the posterior distribution -->
+
+<!-- # Spanish flu -->
+
+<!-- ## Wave -->
+<!-- Incidence per 1'000 inhabitants -->
+
+<!-- ```{r, echo=FALSE,message=FALSE,fig.height = 8,  fig.width = 10} -->
+<!-- function_maps_wave(Wave_Inf=1) -->
+<!-- function_hotspot(Wave_Inf=1) -->
+<!-- function_maps_wave(Wave_Inf=2) -->
+<!-- function_hotspot(Wave_Inf=2) -->
+<!-- ``` -->
+
+## Year
+
+Adjusted legend for each year
+```{r, echo=FALSE,message=FALSE,fig.height = 20,  fig.width = 25}
+p1918 <- function_maps(Year_Inf=1918)
+p1919 <- function_maps(Year_Inf=1919)
+p1920 <- function_maps(Year_Inf=1920)
+p1921 <- function_maps(Year_Inf=1921)
+p1922 <- function_maps(Year_Inf=1922)
+p1923 <- function_maps(Year_Inf=1923)
+p1924 <- function_maps(Year_Inf=1924)
+p1925 <- function_maps(Year_Inf=1925)
+p1926 <- function_maps(Year_Inf=1926)
+cowplot::plot_grid(p1918, p1919, p1920, p1921, p1922, p1923, p1924,p1925, p1926, nrow=3, ncol=3)
 ```
 
-* 1000 samples from the posterior distribution
-
-# Spanish flu
-
-## Maps
-Fitted values
-
-```{r, echo=FALSE,message=FALSE,fig.height = 8,  fig.width = 10}
-function_maps_wave(Wave_Inf=1)
-function_maps_wave(Wave_Inf=2)
-function_maps_wave(Wave_Inf=3)
+Same legend
+```{r, echo=FALSE,message=FALSE,fig.height = 40,  fig.width = 50}
+function_maps_all()
 ```
 
 ## Hotspot
-Fitted values
-
-```{r, echo=FALSE,message=FALSE,fig.height = 8,  fig.width = 10}
-function_hotspot(Wave_Inf=1)
-function_hotspot(Wave_Inf=2)
-function_hotspot(Wave_Inf=3)
+```{r, echo=FALSE,message=FALSE,fig.height = 10,  fig.width = 50}
+p1918 <- function_hotspot_year(Year_Inf=1918)
+p1919 <- function_hotspot_year(Year_Inf=1919)
+p1920 <- function_hotspot_year(Year_Inf=1920)
+p1921 <- function_hotspot_year(Year_Inf=1921)
+p1922 <- function_hotspot_year(Year_Inf=1922)
+p1923 <- function_hotspot_year(Year_Inf=1923)
+p1924 <- function_hotspot_year(Year_Inf=1924)
+p1925 <- function_hotspot_year(Year_Inf=1925)
+p1926 <- function_hotspot_year(Year_Inf=1926)
+cowplot::plot_grid(tmap_grob(p1918), tmap_grob(p1919), tmap_grob(p1920), tmap_grob(p1921), tmap_grob(p1922), 
+             tmap_grob(p1923), tmap_grob(p1924),tmap_grob(p1925), tmap_grob(p1926), nrow=3, ncol=3)
 ```
-

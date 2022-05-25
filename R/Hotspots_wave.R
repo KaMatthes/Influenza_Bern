@@ -1,25 +1,24 @@
 function_hotspot <- function(Wave_Inf) {
-  # load("data/fitted_values_1.RData")
-  # fitted_values_1 <- mean.samples
-  # load("data/fitted_values_2.RData")
-  # fitted_values_2<- mean.samples
-  # load("data/fitted_values_3.RData")
-  # fitted_values_3 <- mean.samples
-  
   load("../data/fitted_values_1.RData")
   fitted_values_1 <- mean.samples
   load("../data/fitted_values_2.RData")
   fitted_values_2<- mean.samples
-  load("../data/fitted_values_3.RData")
-  fitted_values_3 <- mean.samples
-  
-  mean.samples <- rbind(fitted_values_1, fitted_values_2, fitted_values_3) %>%
+
+# 
+#   load("data/fitted_values_1.RData")
+#   fitted_values_1 <- mean.samples
+#   load("data/fitted_values_2.RData")
+#   fitted_values_2<- mean.samples
+
+  mean.samples <- rbind(fitted_values_1, fitted_values_2) %>%
     ungroup() %>%
     dplyr::group_by(Region, Wave) %>%
     mutate(fit=sum(fit)) %>%
     ungroup() %>%
     mutate(fit = ifelse(fit=="Inf", Num, fit),
-           Inc = as.numeric(round(fit/Population*100,2))) %>%
+           Inc = as.numeric(round(fit/Population*100000,2)),
+           Inc_obs = as.numeric(round(Num/Population*100000,2)),
+           SIR = Inc_obs/Inc) %>%
     filter(Wave == Wave_Inf)
 
 # sf::sf_use_s2(TRUE)
@@ -30,21 +29,20 @@ function_hotspot <- function(Wave_Inf) {
     full_join(mean.samples)  %>%
     ungroup() %>%
     filter(!Wave=="NA") %>%
-    select(geometry,Inc) %>%
-    mutate(Inc=ifelse(is.na(Inc), 0, Inc))
+    select(geometry,Inc_obs) 
   
-  if(Wave_Inf==2) {
-  bezirk_geo <-   bezirk_geo %>%
-    mutate(Inc=ifelse(Inc>200, 200, Inc))
-  }
-  else if(Wave_Inf==3) {
-    bezirk_geo <-   bezirk_geo %>%
-      mutate(Inc=ifelse(Inc>10, 10, Inc))
-  }
+  # %>%
+  #   mutate(Inc=ifelse(is.na(Inc), 0, Inc))
   
-  else if(Wave_Inf==1) {
-    bezirk_geo <-   bezirk_geo
-  }
+  # if(Wave_Inf==2) {
+  # bezirk_geo <-   bezirk_geo %>%
+  #   mutate(Inc=ifelse(Inc>35, 35, Inc))
+  # }
+  # else if(Wave_Inf==1) {
+  #   bezirk_geo <-   bezirk_geo %>%
+  #     mutate(Inc=ifelse(Inc>10, 10, Inc))
+  # }
+
   
 # start here
 
@@ -62,7 +60,7 @@ get.ZeroPolicyOption()
 # [1] TRUE
 listw <- nb2listw(neighbours)
 
-gi.fixed <- localG(bezirk_geo$Inc, listw)
+gi.fixed <- localG(bezirk_geo$Inc_obs, listw)
 
 # dnb_lw <- nb2listw(neighbours, style = 'B')
 # gi.adapted <- localG(bezirk_geo$excess_percentage, dnb_lw)

@@ -49,7 +49,10 @@ plot_title <- 25
 
 # load R sources
 
-source("R/maps_wave_fitted.R")
+source("R/maps.R")
+source("R/maps_all.R")
 source("R/Hotspots_wave.R")
+source("R/Hotspots_year.R")
+
 
 render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))

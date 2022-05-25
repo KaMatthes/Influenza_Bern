@@ -1,22 +1,41 @@
-function_maps<- function(){
-  
-  load("data/fitted_values1918.RData")
+function_maps <- function(Year_Inf){
+  # 
+  # load("data/fitted_values1918.RData")
+  # fitted_values1918 <- mean.samples
+  # load("data/fitted_values1919.RData")
+  # fitted_values1919 <- mean.samples
+  # load("data/fitted_values1920.RData")
+  # fitted_values1920 <- mean.samples
+  # load("data/fitted_values1921.RData")
+  # fitted_values1921 <- mean.samples
+  # load("data/fitted_values1922.RData")
+  # fitted_values1922 <- mean.samples
+  # load("data/fitted_values1923.RData")
+  # fitted_values1923 <- mean.samples
+  # load("data/fitted_values1924.RData")
+  # fitted_values1924 <- mean.samples
+  # load("data/fitted_values1925.RData")
+  # fitted_values1925 <- mean.samples
+  # load("data/fitted_values1926.RData")
+  # fitted_values1926 <- mean.samples
+
+  load("../data/fitted_values1918.RData")
   fitted_values1918 <- mean.samples
-  load("data/fitted_values1919.RData")
+  load("../data/fitted_values1919.RData")
   fitted_values1919 <- mean.samples
-  load("data/fitted_values1920.RData")
+  load("../data/fitted_values1920.RData")
   fitted_values1920 <- mean.samples
-  load("data/fitted_values1921.RData")
+  load("../data/fitted_values1921.RData")
   fitted_values1921 <- mean.samples
-  load("data/fitted_values1922.RData")
+  load("../data/fitted_values1922.RData")
   fitted_values1922 <- mean.samples
-  load("data/fitted_values1923.RData")
+  load("../data/fitted_values1923.RData")
   fitted_values1923 <- mean.samples
-  load("data/fitted_values1924.RData")
+  load("../data/fitted_values1924.RData")
   fitted_values1924 <- mean.samples
-  load("data/fitted_values1925.RData")
+  load("../data/fitted_values1925.RData")
   fitted_values1925 <- mean.samples
-  load("data/fitted_values1926.RData")
+  load("../data/fitted_values1926.RData")
   fitted_values1926 <- mean.samples
   
   mean.samples <- rbind(fitted_values1918, fitted_values1919, fitted_values1920,
@@ -24,99 +43,255 @@ function_maps<- function(){
                         fitted_values1924, fitted_values1925, fitted_values1926) %>%
     ungroup() %>%
     mutate(fit = ifelse(fit=="Inf", Num, fit),
-           Inc = fit/Population*10000,
-           Inc_obs = Num/Population/10000) 
-    
+           Inc = fit/Population*1000,
+           Inc_obs = Num/Population*1000,
+           SIR = Inc/Inc_obs,
+           SIR = ifelse(is.na(SIR), 0, SIR),
+           SIR = ifelse(SIR=="Inf", 10, SIR),
+           SIR = ifelse(SIR>10, 10, SIR)) %>%
+    filter(Year==Year_Inf) 
+  
 # sf::sf_use_s2(TRUE)
-
-bezirk_geo <- read_sf("data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+  
+  
+if(Year_Inf == 1918) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,50, 100, 150, 200, 250,300, 400,Inf), 
+                        labels = c("0", ">0-50", ">50 - 100",
+                                   ">100-150", ">150-200",  ">200- 250",
+                                   ">250-300",">300-400",">400"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+else if(Year_Inf == 1919) {
+bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
   mutate(GEM_ID = as.character(GEM_ID)) %>%
   full_join(mean.samples)  %>%
   ungroup() %>%
-  group_by(Year) %>%
   mutate(
-    # SIR_Q = cut(SIR,
-    #                                    breaks=quantile(SIR,
-    #                                                    probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
-    #                                    include.lowest = TRUE),
-         Inc_Q = cut(Inc,
-                     breaks=quantile(Inc,
-                                     probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
-                     include.lowest = TRUE)) %>%
-  ungroup() %>%
-  mutate(Inc_Q= recode(Inc_Q,
-                                    "[2.9e-39,460]" = "Q1",
-                                    "(460,930]" = "Q2",
-                                    "(930,1.43e+03]" = "Q3",
-                                    "(1.43e+03,2.16e+03]" = "Q4",
-                                    "(2.16e+03,6.58e+03]" = "Q5",
-                                    
-                                    "[0,208]" = "Q1",
-                                    "(208,310]" = "Q2",
-                                    "(310,400]" = "Q3",
-                                    "(400,574]" = "Q4",
-                                    "(574,1e+238]" = "Q5",
-                                    
-                                    "[3.48e-05,152]" = "Q1",
-                                    "(152,208]" = "Q2",
-                                    "(208,270]" = "Q3",
-                                    "(270,359]" = "Q4",
-                                    "(359,1.2e+87]" = "Q5",
-                                    
-                                    "[20.02,20.23]" = "Q1",
-                                    "(20.23,20.27]" = "Q2",
-                                    "(20.27,20.32]" = "Q3",
-                                    "(20.32,20.36]" = "Q4",
-                                    "(20.36,5.368e+44]" = "Q5",
-                                    
-                                    "[0,55.3]" = "Q1",
-                                    "(55.3,102]" = "Q2",
-                                    "(102,137]" = "Q3",
-                                    "(137,190]" = "Q4",
-                                    "(190,1.6e+133]" = "Q5",
-                                    
-                                    "[18.42,18.59]" = "Q1",
-                                    "(18.59,18.64]" = "Q2",
-                                    "(18.64,18.69]" = "Q3",
-                                    "(18.69,18.74]" = "Q4",
-                                    "(18.74,6.875e+36]" = "Q5",
-                                    
-                                    "[68.22,100.2]" = "Q1",
-                                    "(100.2,100.5]" = "Q2",
-                                    "(100.5,100.8]" = "Q3",
-                                    "(100.8,101.1]" = "Q4",
-                                    "(101.1,8.743e+117]" = "Q5",
-                                    
-                                    "[0,44.3]" = "Q1",
-                                    "(44.3,58]" = "Q2",
-                                    "(58,87.6]" = "Q3",
-                                    "(87.6,118]" = "Q4",
-                                    "(118,7.29e+206]" = "Q5",
-                                    
-                                    "[33.82,34.18]" = "Q1",
-                                    "(34.18,34.28]" = "Q2",
-                                    "(34.28,34.35]" = "Q3",
-                                    "(34.35,34.45]" = "Q4",
-                                    "(34.45,7.208e+101]" = "Q5")) %>%
-  ungroup() %>%
-  filter(!Year=="NA") %>%
-  mutate(
-    # SIR_Q = cut(SIR,
-    #                                    breaks=quantile(SIR,
-    #                                                    probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
-    #                                    include.lowest = TRUE),
-    Inc_Q_t = cut(Inc,
-                breaks=quantile(Inc,
-                                probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
-                include.lowest = TRUE))
+         # Inc_Q = cut(Inc,
+         #             breaks=quantile(Inc,
+         #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+         #             include.lowest = TRUE),
+         Inc_obs_Q = cut(Inc_obs,
+                         breaks = c( -Inf,0,10, 20, 30, 40, 50,100, 200,Inf), 
+                         labels = c("0", ">0-10", ">10 - 20",
+                                    ">20-30", ">30-40",  ">40- 50",
+                                    ">50-100",">100-200",">200"),
+                         include.lowest = TRUE, right = TRUE)) %>%
+         # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+         #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+         #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+         #               #            "[25%, 30%)","[30%, 35%)",">35"),
+         #               include.lowest = TRUE, right = FALSE)) %>%
+
+  ungroup() 
+}
+ 
+ 
+  else if(Year_Inf == 1920) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,5,10, 15, 20, 25,40,50,Inf), 
+                        labels = c("0", ">0-5", ">5 - 10",
+                                   ">10-15", ">15-20",  ">20- 25",
+                                   ">25-40",">40-50",">50"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
       
-plot_excess <- ggplot()+
+      ungroup() 
+  }
+  
+  else if(Year_Inf == 1921) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,1,2, 3, 4, 5,6,7,Inf), 
+                        labels = c("0", ">0-1", ">1 - 2",
+                                   ">2-3", ">3-4",  ">4-5",
+                                   ">5-6",">6-7",">7"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+  else if(Year_Inf == 1922) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,2,4,10,20,30,40,80,Inf), 
+                        labels = c("0", ">0-2", ">2-4",
+                                   ">4-10", ">10-20",">20-30",
+                                   ">30-40",">40-80",">80"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+  
+  else if(Year_Inf == 1923) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,0.5,1,2, 3, 4, 5,6,Inf), 
+                        labels = c("0", ">0-0.5", ">0.5 - 1",
+                                   ">1-2", ">2-3",  ">3-4",
+                                   ">4-5",">5-6",">6"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+  else if(Year_Inf == 1924) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,1,2,4,8,10,15,20,Inf), 
+                        labels = c("0", ">0-1", ">1-2",
+                                   ">2-4", ">4-8",">8-10",
+                                   ">10-15",">15-20",">20"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+  else if(Year_Inf == 1925) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,2,4,8,10,15,20,100,Inf), 
+                        labels = c("0", ">0-2", ">2-4",
+                                   ">4-8", ">8-10",">10-15",
+                                   ">15-20",">20-100",">100"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+  
+  else if(Year_Inf == 1926) {
+    bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+      mutate(GEM_ID = as.character(GEM_ID)) %>%
+      full_join(mean.samples)  %>%
+      ungroup() %>%
+      mutate(
+        # Inc_Q = cut(Inc,
+        #             breaks=quantile(Inc,
+        #                             probs = seq(0, 1, length.out = no_classes_map + 1), na.rm=TRUE),
+        #             include.lowest = TRUE),
+        #             include.lowest = TRUE),
+        Inc_obs_Q = cut(Inc_obs,
+                        breaks = c( -Inf,0,0.5,1,2, 3, 4, 5,6,Inf), 
+                        labels = c("0", ">0-0.5", ">0.5 - 1",
+                                   ">1-2", ">2-3",  ">3-4",
+                                   ">4-5",">5-6",">6"),
+                        include.lowest = TRUE, right = TRUE)) %>%
+      # SIR_Q = cut(SIR,breaks = c(0, 1,1.1,1.3,1.4,1.5,2,2.5, Inf), 
+      #               # labels = c("<0 %", "[0 %,5%)", "[5%, 10%)",
+      #               #            "[10 %, 15%)", "[15%, 20%)",  "[20%, 25%)",
+      #               #            "[25%, 30%)","[30%, 35%)",">35"),
+      #               include.lowest = TRUE, right = FALSE)) %>%
+      
+      ungroup() 
+  }
+  
+plot_incidence <- ggplot()+
   # geom_sf_pattern(aes(pattern=significant_dummy, fill=excess_rate_group),pattern_fill = "grey50", pattern_color="grey50",
   #                 pattern_spacing = 0.03,pattern_size=0.5 )+
-  geom_sf(data= bezirk_geo, aes(fill=   Inc_obs),alpha=1,col="black", size=0.1) +
-  facet_wrap(~Year, ncol=3) +
-  scale_fill_manual("",values = col5viridis) +
-  ggtitle("Incidence")+
+  geom_sf(data= bezirk_geo, aes(fill= Inc_obs_Q),alpha=1,col="black", size=0.1) +
+  # facet_wrap(~Year, ncol=3) +
+  scale_fill_manual("",values = c("#C6DBEF",col8viridis))+
+  ggtitle(Year_Inf)+
   theme(
     panel.grid.major=element_blank(),
     axis.title=element_blank(),
@@ -124,13 +299,21 @@ plot_excess <- ggplot()+
     axis.text=element_blank(),
     axis.ticks=element_blank(),
     panel.border = element_blank(),
+    legend.text=element_text(size=15),
     legend.position = "bottom")
 # cowplot::save_plot("output/plot_excess.pdf",plot_excess,base_height=12,base_width=10)
 
-
-
-
-return(plot_excess)
-
+return(plot_incidence)
 }
 
+# p1918 <- function_maps(Year_Inf=1918)
+# p1919 <- function_maps(Year_Inf=1919)
+# p1920 <- function_maps(Year_Inf=1920)
+# p1921 <- function_maps(Year_Inf=1921)
+# p1922 <- function_maps(Year_Inf=1922)
+# p1923 <- function_maps(Year_Inf=1923)
+# p1924 <- function_maps(Year_Inf=1924)
+# p1925 <- function_maps(Year_Inf=1925)
+# p1926 <- function_maps(Year_Inf=1926)
+# 
+# cowplot::plot_grid(p1918, p1919, p1920, p1921, p1922, p1923, p1924,p1925, p1926, nrow=3, ncol=3)
