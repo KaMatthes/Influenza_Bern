@@ -29,6 +29,12 @@ library(colorspace)
 library(viridis)
 library(RColorBrewer)
 library(tsoutliers)
+library(gganimate)
+library(ISOweek)
+library(cowplot)
+library(av)
+library(magick)
+library(EpiEstim)
 
 no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
@@ -47,10 +53,15 @@ size_legend_title<- 15
 pd <-position_dodge(width=0.8)
 plot_title <- 25
 
+# Parameter R effective
+
+mean_serial_interval <- 3
+std_serial_interval <- 1
 # load R sources
 
 source("R/maps.R")
 source("R/maps_all.R")
+source("R/maps_wave.R")
 source("R/Hotspots_wave.R")
 source("R/Hotspots_year.R")
 
