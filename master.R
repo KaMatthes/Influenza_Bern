@@ -35,6 +35,8 @@ library(cowplot)
 library(av)
 library(magick)
 library(EpiEstim)
+library(scales)
+# library(estimateR)
 
 no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
@@ -53,9 +55,12 @@ size_legend_title<- 15
 pd <-position_dodge(width=0.8)
 plot_title <- 25
 
+
+lims1 <- as.POSIXct(ymd("1918-01-04"))    
+lims2 <- as.POSIXct(ymd("1925-12-25"))   
 # Parameter R effective
 
-mean_serial_interval <- 3
+mean_serial_interval <- 1.00001
 std_serial_interval <- 1
 # load R sources
 
