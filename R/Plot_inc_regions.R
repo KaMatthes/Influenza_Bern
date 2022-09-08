@@ -1,6 +1,6 @@
-function_R__inc_plot<- function() {
+function_R_inc_plot<- function() {
   
-  load("data/data_bern.RData")
+  load("../data/data_bern.RData")
 
 data_region <- data_bern %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk")%>%
@@ -23,7 +23,6 @@ data_region <- data_bern %>%
          roll_num =rollmean(NumRegion,3, na.pad=TRUE, align="right")) %>%
   ungroup() %>%
   mutate(roll_inc = ifelse(is.na(roll_inc),0, roll_inc),
-         Region_Name = factor(Region_Name, levels = c("Biel","Bern","Thun","Jura","Seeland","Oberaargau","Mittelland Bern","Voralpen","Oberland")),
          Region_Name = recode(Region_Name,
                               # "Biel" ="City of Biel",
                               # "Bern" ="City of Bern",
@@ -33,24 +32,35 @@ data_region <- data_bern %>%
   mutate( Region_Name = recode(Region_Name,
                                "Biel" ="City of Biel",
                                "Bern" ="City of Bern",
-                               "Thun" = "City of Thun"))
+                               "Thun" = "City of Thun"),
+          Region_Name = factor(Region_Name, 
+                               levels = c("Jura","City of Biel","Seeland","Oberaargau","Mittelland","City of Bern","Voralpen","City of Thun","Oberland")))
 
 plot_inc <- ggplot(data=data_region) +
-  geom_bar(aes(x = as.POSIXct(date_week), y = NumInc),stat="identity", alpha=1,fill = "grey") +
-  geom_line(aes(x = as.POSIXct(date_week), y = roll_inc), lwd = 0.8, col="grey17") +
-  # geom_line(aes(x = date_week, y = R_eff), lwd = 1, col="green") +
-  # geom_hline(yintercept=1)+
+  geom_vline(xintercept=datlim1, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim3, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim5, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim7, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim9, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim11, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_vline(xintercept=datlim13, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_bar(aes(x = as.POSIXct(date_week), y = NumInc, fill=Region_Name),stat="identity") +
+  geom_line(aes(x = as.POSIXct(date_week), y = roll_inc, col=Region_Name), lwd = lwdline) +
+  xlab("")+
+  ylab("per 1,000 inhab.")+
   facet_wrap(Region_Name~., ncol=1) +
   scale_x_datetime( breaks = date_breaks("6 month"), 
                     labels = label_date_short(),
                     limits =c(min(lims1), max(lims2)),
                     expand = c(0,0)) +
-  # scale_y_continuous(
-  #   name = "Influenza Cases in xx",
-  #   sec.axis = sec_axis(~./coeff, name = "R effectiv")
-  # ) +
-  xlab("Month/Year")+
-  ylab("per 1,000 inhab.")+
-  theme_bw()
+  scale_color_manual(values=colAnnals)+
+  scale_fill_manual(values=colAnnals)+
+  theme_bw()+
+  theme_bw()+
+  theme(axis.text = element_text(size=text_size),
+        axis.title = element_text(size=text_size),
+        legend.position = "none")
+
+return(plot_inc)
 
 }

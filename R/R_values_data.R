@@ -39,7 +39,7 @@ data_region <- data_bern %>%
   mutate(roll_num =rollmean(NumRegion,3, na.pad=TRUE, align="right")) %>%
   ungroup() %>%
   mutate(roll_num  = ifelse(roll_num<6,0, roll_num))
-  
+
 data_region1 <- data_region %>%
   filter(Region_Name==Region) %>%
   filter(!is.na(roll_num)) %>%
@@ -89,8 +89,8 @@ std_serial_interval = 1
     full_join(data_region1) %>%
     arrange(date_week)
   # 
-return(  res_R_eff)
- # save(res_R_eff,file=paste0("data/R_eff_data/res_R_eff_",Region,"_",pandemic_start,".RData"))
+# return(  res_R_eff)
+save(res_R_eff,file=paste0("data/R_eff_data/res_R_eff_",Region,"_",pandemic_start,".RData"))
   
 }
 
