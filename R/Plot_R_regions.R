@@ -44,6 +44,7 @@ plot_R_eff <- ggplot(data=res_R_eff) +
   theme_bw()+
   theme(axis.text = element_text(size=text_size),
         axis.title = element_text(size=text_size),
+        strip.text= element_text(colour ="black",size=strip_text,face="bold"),
         legend.position = "none")
 
 return(plot_R_eff)

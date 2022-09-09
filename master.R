@@ -45,7 +45,7 @@ colAnnals<- c("#477DB5","black","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4",
 
 
 text_size <-80
-strip_text <- 20
+strip_text <- 80
 size_axis_title <- 20
 lwd_size_stillbirth <- 5
 lwd_size <- 0.8
@@ -57,6 +57,10 @@ size_legend_title<- 15
 pd <-position_dodge(width=0.8)
 plot_title <- 25
 line_type <-  "solid"
+legend_size_map <- 3
+legend_title_map <- 4
+main_size_map <- 5
+
 
 
 lims1 <- as.POSIXct(ymd("1918-01-04"))    
@@ -103,6 +107,8 @@ source("R/Plot_inc_total.R")
 source("R/Plot_R_total.R")
 source("R/Plot_inc_regions.R")
 source("R/Plot_R_regions.R")
+source("R/Hotspots_wave_regions.R")
+source("R/Maps_Jenks.R")
 # 
 # render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))
 render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))

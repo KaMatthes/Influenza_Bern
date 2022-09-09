@@ -59,6 +59,7 @@ plot_inc <- ggplot(data=data_region) +
   theme_bw()+
   theme(axis.text = element_text(size=text_size),
         axis.title = element_text(size=text_size),
+        strip.text= element_text(colour ="black",size=strip_text,face="bold"),
         legend.position = "none")
 
 return(plot_inc)
