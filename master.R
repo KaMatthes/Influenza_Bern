@@ -34,9 +34,18 @@ library(ISOweek)
 library(cowplot)
 library(av)
 library(magick)
-library(EpiEstim)
+# library(EpiEstim)
 library(scales)
+library(MASS)
+library(conflicted)
 # library(estimateR)
+
+
+conflict_prefer("select", "dplyr")
+conflict_prefer("mutate", "dplyr")
+conflict_prefer("recode", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("rename", "dplyr")
 
 no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
@@ -60,6 +69,9 @@ line_type <-  "solid"
 legend_size_map <- 3
 legend_title_map <- 4
 main_size_map <- 5
+lwd_size_points  <- 3
+lwd_size <- 1.5
+col_line <- "grey40"
 
 
 
