@@ -39,6 +39,7 @@ library(scales)
 library(MASS)
 library(conflicted)
 # library(estimateR)
+library(introdataviz)
 
 
 conflict_prefer("select", "dplyr")
@@ -46,6 +47,8 @@ conflict_prefer("mutate", "dplyr")
 conflict_prefer("recode", "dplyr")
 conflict_prefer("filter", "dplyr")
 conflict_prefer("rename", "dplyr")
+conflict_prefer("summarise", "dplyr")
+conflict_prefer("arrange", "dplyr")
 
 no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
@@ -71,7 +74,19 @@ legend_title_map <- 4
 main_size_map <- 5
 lwd_size_points  <- 3
 lwd_size <- 1.5
+
 col_line <- "grey40"
+lwd_size <- 1.5
+axix_size_legend <- 6
+axis_size  <- 15
+axis_size_title  <- 15
+legend_size <- 15
+legend_size_title <- 15
+size_title <- 15
+legend_size_map <-1
+panel_size_map <- 1.5
+legend_size_title_map <- 1.5
+plot_title_size <- 15
 
 
 
@@ -121,6 +136,17 @@ source("R/Plot_inc_regions.R")
 source("R/Plot_R_regions.R")
 source("R/Hotspots_wave_regions.R")
 source("R/Maps_Jenks.R")
-# 
+source("R/function_popdensity.R")
+source("R/function_altitude.R")
+source("R/function_rain.R")
+source("R/function_lws.R")
+source("R/function_gew.R")
+source("R/function_tb.R")
+source("R/function_betriebe.R")
+source("R/function_arbeiter.R")
+source("R/function_ps.R")
+
 # render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))
-render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))
+# render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))
+
+render(paste0("R/Influenza_Bern_Marco.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Marco.html"))

@@ -17,7 +17,7 @@ data_region <- data_bern %>%
   #        date_week =  ISOweek2date(iso_week_year) +4) %>%
   dplyr::group_by(Region_Name,Year, date_week,iso_week ) %>%
   filter(!iso_week=="1918_53") %>%
-  summarise(NumRegion = sum(NumbCases),
+  summarise(NumRegion = sum(NumbCases, na.rm=TRUE),
             PopRegion = sum(Population)) %>%
   ungroup() %>%
   mutate(NumInc = NumRegion/PopRegion*1000)%>%

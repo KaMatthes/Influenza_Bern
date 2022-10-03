@@ -1,4 +1,4 @@
-function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
+function_hotspot_wave <- function(pandemic_start, pandemic_end, Pandemic_Name) {
   load("../data/data_bern.RData")
 
   data_region <- data_bern %>%
@@ -15,10 +15,11 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
            isoweek_date2 = ISOweek2date(isoweek_date),
            GEM_ID = as.character(GEM_ID)) %>%
     group_by(GEM_ID) %>%
-    mutate(Sum_date = sum(NumbCases, na.rm=TRUE)) %>%
+    mutate(Sum_date = sum(NumbCases, na.rm=TRUE),
+           Sum_Pop = sum(Population),
+           Sum_Inc =Sum_date/Population*1000) %>%
     ungroup() %>%
-    distinct(GEM_ID, .keep_all = TRUE) %>%
-    mutate(Sum_Inc =Sum_date/Population*1000)
+    distinct(GEM_ID, .keep_all = TRUE)
   
 # sf::sf_use_s2(TRUE)
   bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
@@ -31,19 +32,52 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
     filter(!st_is_empty(.)) %>%
     mutate(Sum_Inc = ifelse(is.na(Sum_Inc), 0, Sum_Inc))
   
+  # %>%
+  #   mutate(Inc=ifelse(is.na(Inc), 0, Inc))
   
-  data_maps <- st_as_sf(bezirk_geo)
+  # if(Wave_Inf==2) {
+  # bezirk_geo <-   bezirk_geo %>%
+  #   mutate(Inc=ifelse(Inc>35, 35, Inc))
+  # }
+  # else if(Wave_Inf==1) {
+  #   bezirk_geo <-   bezirk_geo %>%
+  #     mutate(Inc=ifelse(Inc>10, 10, Inc))
+  # }
 
-  plot_maps <- tm_shape( data_maps ) + 
-    tm_fill("Sum_Inc",
-            palette = "Reds", 
-            # legend.hist = TRUE,
-            style = "jenks",
-            # style = "kmeans",
-            title = "Incidence") +
-    tm_borders(alpha = 0.5)+
+  
+# start here
+
+  neighbours <- poly2nb(bezirk_geo$geometry)
+  # listw <- nb2listw(neighbours)
+  # gi.fixed <- localG(bezirk_geo$Inc, listw)
+  # 
+
+# print(nb2listw(neighbours = neighbours,  zero.policy = TRUE),  zero.policy = TRUE)
+get.ZeroPolicyOption()
+# [1] FALSE
+set.ZeroPolicyOption(TRUE)
+# [1] FALSE
+get.ZeroPolicyOption()
+# [1] TRUE
+listw <- nb2listw(neighbours)
+
+gi.fixed <- localG(bezirk_geo$Sum_Inc, listw)
+
+# dnb_lw <- nb2listw(neighbours, style = 'B')
+# gi.adapted <- localG(bezirk_geo$excess_percentage, dnb_lw)
+
+bezirk_geo.gi <- cbind(bezirk_geo, as.matrix(gi.fixed)) %>%
+  rename(gstat=as.matrix.gi.fixed.)
+
+plot_hotspot_wave <- tm_shape(bezirk_geo.gi) +
+  tm_fill(col = "gstat", 
+          style = "pretty",
+          palette="-RdBu",
+          title = "local Gi",
+          midpoint = 0) +
+  tm_borders(alpha = 0.5) +
   tm_layout(
-    main.title = "Incidence per 1'000 inhabitants",
+    main.title = "Hotspots",
     main.title.position = "left",
     legend.text.size = legend_size_map,
     # legend.width = 5,
@@ -52,6 +86,6 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
     legend.title.size=legend_size_map,
     main.title.size = main_size_map)
 
-return(  plot_maps)
+return(plot_hotspot_wave)
 
 }
