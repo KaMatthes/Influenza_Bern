@@ -2,7 +2,7 @@ function_ps <- function(Type) {
 
 data_ps <- read.csv("../data_raw/Fabrik_Statistik_1929.csv", sep=";")  %>%
   rename(Gemeinde_Name = Gemeinde) %>%
-  # rename(Gemeinde_Name = Gemeinde) %>%
+  rename(PS_tmp = PS) %>%
   mutate( Gemeinde_Name = recode( Gemeinde_Name,"St. Beatenberg" ="Beatenberg",
                                   "St. Imier" ="St-Imier",
                                   "Gündlischwand"="Gründlischwand",
@@ -41,11 +41,35 @@ data_ps <- read.csv("../data_raw/Fabrik_Statistik_1929.csv", sep=";")  %>%
                                   "Les Enfers" = "Enfers",
                                   "Niederried bei Interlaken" ="Niederried b. Interlaken",
                                   "Niederried bei Kallnach" = "Niederried b. Kallnach",
+                                  "La Ferrière" = "Courtelary",
+                                  "Montignez" = "Buix",
+                                  "Niderwichtrach" = "Niederwichtrach",
+                                  "Les Genevez" = "Genevez",
                                   "Oberwil" = "Oberwil b. Büren",
+                                  "Langnau i. E." = "Langnau",
+                                  "Büren a. A." = "Büren an der Aare",
                                   "Oberwil bei Büren" = "Oberwil b. Büren",
+                                  "Busswil b. B." ="Busswil b. Büren",
+                                  "Herbligen" ="Steffisburg",
+                                  "Oberried a. Brienzersee" = "Oberried",
+                                  "Wangen a. A." ="Wangen",
+                                  "Stalden i. E." = "Stalden",
+                                  "Tramelan-Dessous" ="Tramelan",
+                                  "Herbligen" ="Steffisburg",
+                                  "Tramelan-Dessus" ="Tramelan",
+                                  "Porrentruy" = "Pruntrut",
+                                  "Sonviller" = "Sonvilier",
+                                  "Sonceboz-Sombeval" = "Sonceboz",
+                                  "Les Pommerals" ="Saignelégier",
+                                  "Mallcray" =  "Malleray",
                                   "Röthenbach bei Herzogenbuchsee" = "Röthenbach im Emmenthal",
                                   "Rüti" = "Rüti b. Büren")) %>%
+  group_by(Gemeinde_Name) %>%
+  mutate(PS=sum(PS_tmp)) %>%
+  ungroup() %>%
+  distinct(Gemeinde_Name, .keep_all = TRUE) %>%
   select(Gemeinde_Name, PS)
+
 
 load("../data/data_bern.RData")
 
@@ -60,7 +84,7 @@ data_inc <- data_bern %>%
   mutate(Sum_date = sum(NumbCases, na.rm=TRUE))%>%
   ungroup() %>%
   distinct(GEM_ID, .keep_all = TRUE) %>%
-  left_join(data_fabric) %>%
+  left_join(data_ps) %>%
   mutate(Sum_Inc =Sum_date/Population*1000,
          GEM_ID = as.character(GEM_ID),
          PS=ifelse(is.na(PS),0, PS),

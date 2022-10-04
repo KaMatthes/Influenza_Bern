@@ -14,7 +14,7 @@ data_s <- read.xlsx("data_raw/Masterarbeit_Rohdaten_Gina_23_3_17.xlsx", sheet="R
          Wochennummer = ifelse(Year==1918 & Wochennummer == 53, 1,Wochennummer),
          Year = ifelse(Year==1918 & Wochennummer== 53, 1919, Year),
          Wochennummer = ifelse(Year==1919 & Wochennummer == 53, 1,Wochennummer),
-         Year = ifelse(Year==1919 & Wochennummer== 53, 1920, Year))%>%
+         Year = ifelse(Year==1919 & Wochennummer== 53, 1920, Year)) %>%
   # filter(!DummyNumbCasesAdjust==1) %>%
   arrange(Year, Gemeinde_Name,Wochennummer) %>%
   # group_by(Year,District,BEZ_ID, Municipality, GEM_ID) %>%

@@ -1,15 +1,22 @@
 function_tb <- function(Type) {
 
-data_tb <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
+data_tb <- read.xlsx("../data_raw/Tb_death.xlsx")  %>%
   # rename(Gemeinde_Name = Gemeinde) %>%
-  # rename(Gemeinde_Name = Gemeinde) %>%
+  rename(Gemeinde_Name = Gemeinde) %>%
   mutate( Gemeinde_Name = recode( Gemeinde_Name,"St. Beatenberg" ="Beatenberg",
                                   "St. Imier" ="St-Imier",
+                                  "Aeschlen"  = "Oberdiessbach",
                                   "Gündlischwand"="Gründlischwand",
                                   "Tramelan-dessus" = "Tramelan",
                                   "Meirisberg" = "Meinisberg",
                                   "Martiswil" = "Madiswil",
                                   "Musligen" = "Merzligen",
+                                  "Bickingen-Schwanden" ="Wynigen",
+                                  "Bleiken" ="Oberdiessbach",
+                                  "Bourrignon" ="Delémont",
+                                  "Bözingen" ="Biel",
+                                  "Busswil b. M." = "Busswil b. Melchnau",
+                                  "Busswil im S." = "Busswil b. Büren",
                                   "Mettstetten" = "Mattstetten",
                                   "Seehof" = "Seedorf",
                                   "Büren" = "Büren an der Aare",
@@ -28,6 +35,28 @@ data_tb <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
                                   "Wichtrach" = "Niederwichtrach",
                                   "Teuffenthal" = "Unterlangenegg",
                                   "Montignez" = "Buix",
+                                  "Corban" ="Delémont",
+                                  "Courchapoix" ="Delémont",
+                                  "Ederswiler" = "Delémont",
+                                  "Clavaleyres" = "Moutier",
+                                  "Ebligen" ="Oberried",
+                                  "Goldiwil" ="Thun",
+                                  "Herbligen" ="Steffisburg",
+                                  "La Ferrière" = "Courtelary",
+                                  "Le Peuchapatte" = "Muriaux",
+                                  "Madretsch" ="Biel",
+                                  "Messen-Scheunen" ="Scheunen",
+                                  "Mett" ="Biel",
+                                  "Mötschwil-Schleumen" = "Mötschwil",
+                                  "Hermiswil" ="Seeberg",
+                                  "Niederried b. K." = "Niederried b. Kallnach",
+                                  "Oberscheunen" ="Scheunen",
+                                  "Oberwil b. B." = "Oberwil b. Büren",
+                                  "Sonceboz-Sombeval" ="Sonceboz",
+                                  "Strättligen" = "Thun",
+                                  "Walliswil-Wangen" ="Walliswil b. Wangen",
+                                  "Horrenbach-Buchen" = "Horrenbach",
+                                  "Gäserz" ="Brüttelen",
                                   "Sutz" = "Sutz-Lattrigen",
                                   "Hasliberg" = "Hasleberg",
                                   "Wiler" = "Wiler bei Utzenstorf",
@@ -45,7 +74,11 @@ data_tb <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
                                   "Oberwil bei Büren" = "Oberwil b. Büren",
                                   "Röthenbach bei Herzogenbuchsee" = "Röthenbach im Emmenthal",
                                   "Rüti" = "Rüti b. Büren")) %>%
-  select(GEM_ID,Gemeinde_Name, TB)
+  group_by(Gemeinde_Name) %>%
+  mutate(TB=mean(TB_death_10000)) %>%
+  ungroup() %>%
+  distinct(Gemeinde_Name, .keep_all = TRUE) %>%
+  select(Gemeinde_Name,TB)
 
 load("../data/data_bern.RData")
 
@@ -61,26 +94,24 @@ data_inc <- data_bern %>%
   ungroup() %>%
   distinct(GEM_ID, .keep_all = TRUE) %>%
   left_join(data_tb) %>%
-  mutate(Sum_Inc =Sum_date/Population*1000,
-         GEM_ID = as.character(GEM_ID),
-         TB_year = TB/10,
-         TB_mort = TB_year/Population*1000)
+  mutate(Sum_Inc =Sum_date/Population*10000,
+         GEM_ID = as.character(GEM_ID))
          
+
 
 if(Type=="Regression") {
 # poisson2 <- glm(Sum_date ~ TB_mor+offset(log(Population)),data = data_inc,  family=poisson)
-glmNB <- glm.nb(Sum_date ~   TB_mort+offset(log(Population)),data = data_inc, link = "log")
+glmNB <- glm.nb(Sum_date ~   TB+offset(log(Population)),data = data_inc, link = "log")
 summary(glmNB)
 }
 
 else if(Type=="Figure") {
 plot_co <- ggplot(data=data_inc) +
-  geom_point(aes(x= TB_mort, y= Sum_Inc), lwd=lwd_size_points ) +
-  geom_smooth(aes(x= TB_mort,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
+  geom_point(aes(x= TB, y= Sum_Inc), lwd=lwd_size_points ) +
+  geom_smooth(aes(x= TB,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
   ggtitle(" Relation TB vs Influenza")+
-  ylab("Incidence per 1'000 inhabitants")+
-  xlab("TB death per 1'000 inhabitants") +
-  xlim(0,8) +
+  ylab("Incidence per 10'000 inhabitants")+
+  xlab("TB death per 10'000 inhabitants") +
   theme_bw() +
   theme(aspect.ratio = 1,
         axis.text.x=element_text(color="black",size=10),
@@ -107,11 +138,11 @@ else if(Type=="Maps") {
     # select(geometry,TB_mor,Sum_Inc) %>%
     filter(!st_is_empty(.)) %>%
     mutate(Sum_Inc = ifelse(is.na(Sum_Inc), 0, Sum_Inc))%>%
-    select(GEM_ID, geometry,Sum_Inc,TB_mort)
+    select(GEM_ID, geometry,Sum_Inc,TB)
   
   bezirk_geo <-as(bezirk_geo, "Spatial")
   
-  bivariate_choropleth(bezirk_geo, c("TB_mort", "Sum_Inc"), c("TB death", "Influenza"), bivmap_title="Relation TB death and Influenza")
+  bivariate_choropleth(bezirk_geo, c("TB", "Sum_Inc"), c("TB death", "Influenza"), bivmap_title="Relation TB death and Influenza")
   
 }
 

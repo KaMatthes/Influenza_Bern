@@ -10,13 +10,17 @@ data_region <- data_bern %>%
          Region_Name = ifelse(Region_Name=="Laufental", "Jura", Region_Name)) %>%
   filter(!Gemeinde_Name=="Gstaad") %>%
   filter(!iso_week=="1918_53") %>%
+  dplyr::group_by(Gemeinde_Name,iso_week) %>%
+  dplyr::mutate(NumbCases= sum(NumbCases)) %>%
+  ungroup() %>%
+  distinct(Gemeinde_Name, iso_week,.keep_all = TRUE) %>%
   dplyr::group_by(Region_Name,Year, date_week,iso_week ) %>%
-  summarise(NumRegion = sum(NumbCases),
+  dplyr::summarise(NumRegion = sum(NumbCases),
             PopRegion = sum(Population)) %>%
   ungroup() %>%
   mutate( NumRegion  = ifelse(iso_week=="1918_28" & Region_Name=="Bern", 60, NumRegion),
           NumRegion  = ifelse(iso_week=="1918_29" & Region_Name=="Bern", 240, NumRegion),
-     NumInc = NumRegion/PopRegion*1000)%>%
+     NumInc = NumRegion/PopRegion*1000) %>%
   arrange(Region_Name, Year, date_week) %>%
   dplyr::group_by(Region_Name) %>%
   mutate(roll_inc =rollmean(NumInc,3, na.pad=TRUE, align="right"),

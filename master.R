@@ -83,7 +83,7 @@ axis_size_title  <- 15
 legend_size <- 15
 legend_size_title <- 15
 size_title <- 15
-legend_size_map <-1
+# legend_size_map <-1
 panel_size_map <- 1.5
 legend_size_title_map <- 1.5
 plot_title_size <- 15
@@ -94,27 +94,26 @@ lims1 <- as.POSIXct(ymd("1918-01-04"))
 lims2 <- as.POSIXct(ymd("1925-12-25"))   
 
 
+datlim1 <- as.POSIXct(ymd("1918-06-21"))
+datlim2 <- as.POSIXct(ymd("1918-09-20"))
 
-datlim1 <- as.POSIXct(ymd("1918-07-06"))
-datlim2 <- as.POSIXct(ymd("1918-08-17"))
-
-datlim3 <- as.POSIXct(ymd("1918-09-14"))
+datlim3 <- as.POSIXct(ymd("1918-09-27"))
 datlim4 <- as.POSIXct(ymd("1918-12-21"))
 
 datlim5 <- as.POSIXct(ymd("1919-02-08"))
-datlim6 <- as.POSIXct(ymd("1919-05-10"))
+datlim6 <- as.POSIXct(ymd("1919-06-20"))
 
-datlim7 <- as.POSIXct(ymd("1920-01-10"))
-datlim8 <- as.POSIXct(ymd("1920-05-22"))
+datlim7 <- as.POSIXct(ymd("1920-01-02"))
+datlim8 <- as.POSIXct(ymd("1920-06-18"))
 
-datlim9 <- as.POSIXct(ymd("1922-01-06"))
-datlim10 <- as.POSIXct(ymd("1922-04-08"))
+datlim9 <- as.POSIXct(ymd("1921-12-23"))
+datlim10 <- as.POSIXct(ymd("1922-05-05"))
 
-datlim11 <- as.POSIXct(ymd("1924-01-19"))
-datlim12 <- as.POSIXct(ymd("1924-05-10"))
+datlim11 <- as.POSIXct(ymd("1924-01-11"))
+datlim12 <- as.POSIXct(ymd("1924-05-30"))
 
-datlim13 <- as.POSIXct(ymd("1925-01-31"))
-datlim14 <- as.POSIXct(ymd("1925-05-16"))
+datlim13 <- as.POSIXct(ymd("1924-12-12"))
+datlim14 <- as.POSIXct(ymd("1925-05-08"))
 
 
 
