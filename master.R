@@ -1,4 +1,5 @@
 .libPaths(c("H:/Documents/R/win-library/4.1", "C:/Program Files/R/R-4.2.1/library"))
+options(scipen = 100)
 
 library(plyr)
 library(readxl)
@@ -40,6 +41,8 @@ library(MASS)
 library(conflicted)
 # library(estimateR)
 library(introdataviz)
+library(robmixglm)
+
 
 
 conflict_prefer("select", "dplyr")
@@ -144,6 +147,7 @@ source("R/function_tb.R")
 source("R/function_betriebe.R")
 source("R/function_arbeiter.R")
 source("R/function_ps.R")
+source("R/function_stations.R")
 
 # render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))
 # render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))

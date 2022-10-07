@@ -1,4 +1,4 @@
-function_gew <- function(Type) {
+function_gew <- function(Type,pandemic_start, pandemic_end,Pandemic_Name) {
 
 data_gew <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
   # rename(Gemeinde_Name = Gemeinde) %>%
@@ -49,7 +49,7 @@ data_gew <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
 load("../data/data_bern.RData")
 
 data_inc <- data_bern %>%
-  filter(Year==1918 | Year==1919) %>%
+  filter(date_week >=ymd(pandemic_start) & date_week <= ymd(pandemic_end))  %>%
   filter(!Gemeinde_Name=="Gstaad") %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk") %>%
   filter(!Gemeinde_Name=="Wengen") %>%
@@ -62,19 +62,33 @@ data_inc <- data_bern %>%
   left_join(data_gew) %>%
   mutate(Sum_Inc =Sum_date/Population*1000,
          Gew_prop = Gew/Population*100,
+         # Gew_prop = ifelse(Gew_prop>50, 50, Gew_prop),
          GEM_ID = as.character(GEM_ID)) 
 
 if(Type=="Regression") {
 # poisson2 <- glm(Sum_date ~ TB_mor+offset(log(Population)),data = data_inc,  family=poisson)
-glmNB <- glm.nb(Sum_date ~  Gew_prop+offset(log(Population)),data = data_inc, link = "log")
-summary(glmNB)
+
+glmNB_r <-  robmixglm(Sum_date ~   Gew_prop+offset(log(Population)),data = data_inc, family="nbinom")
+summary(glmNB_r)
+
+est <-round(coef(glmNB_r)[2],6)
+se <- round(coefficients(summary(glmNB_r))[2,2],6)
+Cl <- est - 1.96*se
+Cu <- est + 1.96*se
+
+res <- data.frame(Pandemic=Pandemic_Name,est=est, Cl=Cl, Cu=Cu) %>%
+  mutate(Var = row.names(.))%>%
+  remove_rownames(.) %>%
+  select(Pandemic, Var, est, Cl, Cu) 
+return(res)
 }
 
 else if(Type=="Figure") {
   plot_co <- ggplot(data=data_inc) +
     geom_point(aes(x= Gew_prop, y= Sum_Inc), lwd=lwd_size_points ) +
-    geom_smooth(aes(x= Gew_prop,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
-    ggtitle(" Relation Working in industry vs Influenza")+
+    geom_smooth(aes(x= Gew_prop,y= Sum_Inc),  method='rlm',se=TRUE,lwd=lwd_size, col=col_line) +
+    # ggtitle(" Relation Working in industry vs Influenza")+
+    ggtitle(Pandemic_Name)+
     ylab("Incidence per 1'000 inhabitants")+
     xlab("Proportion of people in industry") +
     theme_bw() +

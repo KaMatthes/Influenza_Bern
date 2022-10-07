@@ -1,4 +1,4 @@
-function_popdensity <- function(Type) {
+function_popdensity <- function(Type,pandemic_start, pandemic_end,Pandemic_Name) {
 
 data_pop_density  <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
   # rename(Gemeinde_Name = Gemeinde) %>%
@@ -50,7 +50,7 @@ data_pop_density  <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
 load("../data/data_bern.RData")
 
 data_inc <- data_bern %>%
-  filter(Year==1918 | Year==1919) %>%
+  filter(date_week >=ymd(pandemic_start) & date_week <= ymd(pandemic_end))  %>%
   filter(!Gemeinde_Name=="Gstaad") %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk") %>%
   filter(!Gemeinde_Name=="Wengen") %>%
@@ -63,55 +63,70 @@ data_inc <- data_bern %>%
   left_join(data_pop_density) %>%
   mutate(Sum_Inc =Sum_date/Population*1000,
          GEM_ID = as.character(GEM_ID),
-         median_denspop = median(PopDens),
+         median_denspop = median(PopDens, na.rm=TRUE),
          dens_group = ifelse( PopDens <median_denspop, "small", "large" ),
          dens_group = factor( dens_group, levels = c("small", "large")),
-         tempx= 1)
+         tempx= 1) %>%
+  filter(!is.na(dens_group))
          
 
 if(Type=="Regression") {
 # poisson2 <- glm(Sum_date ~ TB_mor+offset(log(Population)),data = data_inc,  family=poisson)
-glmNB <- glm.nb(Sum_date ~  PopDens+offset(log(Population)),data = data_inc, link = "log")
-summary(glmNB)
+
+glmNB_r <-  robmixglm(Sum_date ~  dens_group+offset(log(Population)),data = data_inc, family="nbinom")
+summary(glmNB_r)
+
+est <-round(coef(glmNB_r)[2],6)
+se <- round(coefficients(summary(glmNB_r))[2,2],6)
+Cl <- est - 1.96*se
+Cu <- est + 1.96*se
+
+res <- data.frame(Pandemic=Pandemic_Name,est=est, Cl=Cl, Cu=Cu) %>%
+  mutate(Var = row.names(.))%>%
+  remove_rownames(.) %>%
+  select(Pandemic, Var, est, Cl, Cu) 
+return(res)
+
 }
 
 else if(Type=="Figure") {
   
-# plot_co <- ggplot(data=data_inc,aes(x=tempx, y=Sum_Inc, fill = dens_group)) +
-#   geom_split_violin() +
-#   stat_summary(fun = median,
-#                width = 0.25,
-#                position = position_dodge(width = .25),
-#                colour = "black",
-#                geom = "crossbar",
-#                show.legend=FALSE) +
-#   scale_fill_manual("",values = c(16,15))  +
-#   ggtitle("Population density")+
-#   ylab("Incidence")+
-#   xlab("") +
-#   theme_bw() +
-#   theme(aspect.ratio = 1,
-#         axis.text.y = element_text(color="black",size=axis_size),
-#         axis.text.x=element_blank(),
-#         axis.ticks.x=element_blank(),
-#         axis.title=element_text(size=size_axis_title),
-#         legend.text=element_text(size=legend_size),
-#         legend.title =element_text(size=legend_size_title),
-#         plot.title = element_text(size=plot_title_size ),
-#         legend.position = "bottom")
+plot_co <- ggplot(data=data_inc,aes(x=tempx, y=Sum_Inc, fill = dens_group)) +
+  geom_split_violin() +
+  stat_summary(fun = median,
+               width = 0.25,
+               position = position_dodge(width = .25),
+               colour = "black",
+               geom = "crossbar",
+               show.legend=FALSE) +
+  scale_fill_manual("",values = c(16,15))  +
+  ggtitle(Pandemic_Name)+
+  ylab("Incidence")+
+  xlab("") +
+  theme_bw() +
+  theme(aspect.ratio = 1,
+        axis.text.y = element_text(color="black",size=axis_size),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=legend_size),
+        legend.title =element_text(size=legend_size_title),
+        plot.title = element_text(size=plot_title_size ),
+        legend.position = "bottom")
 
-plot_co <- ggplot(data=data_inc) +
-    geom_point(aes(x= PopDens, y= Sum_Inc), lwd=lwd_size_points ) +
-    geom_smooth(aes(x= PopDens,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
-    ggtitle(" Relation Population density vs Influenza")+
-    ylab("Incidence per 1'000 inhabitants")+
-    xlab("Population Density") +
-    xlim(0,1000)+
-    theme_bw() +
-    theme(aspect.ratio = 1,
-          axis.text.x=element_text(color="black",size=axis_size),
-          axis.title=element_text(size=axis_size),
-          plot.title = element_text(size=size_title))
+# plot_co <- ggplot(data=data_inc) +
+#   geom_point(aes(x= PopDens, y= Sum_Inc), lwd=lwd_size_points ) +
+#   geom_smooth(aes(x= PopDens,y= Sum_Inc),  method='rlm',se=TRUE,lwd=lwd_size, col=col_line) +
+#   # ggtitle("Relation Population density vs Influenza")+
+#   ggtitle(Pandemic_Name)+
+#     ylab("Incidence per 1'000 inhabitants")+
+#     xlab("Population Density") +
+#     xlim(0,250)+
+#     theme_bw() +
+#     theme(aspect.ratio = 1,
+#           axis.text.x=element_text(color="black",size=axis_size),
+#           axis.title=element_text(size=axis_size),
+#           plot.title = element_text(size=size_title))
   # cowplot::save_plot("output/plot_SEP.pdf",plot_SEP,ba
   return(plot_co)
   

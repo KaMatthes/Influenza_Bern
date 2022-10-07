@@ -1,4 +1,4 @@
-function_altitude <- function(Type) {
+function_altitude <- function(Type,pandemic_start, pandemic_end,Pandemic_Name) {
 
 data_altitude <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
   # rename(Gemeinde_Name = Gemeinde) %>%
@@ -51,7 +51,7 @@ data_altitude <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
 load("../data/data_bern.RData")
 
 data_inc <- data_bern %>%
-  filter(Year==1918 | Year==1919) %>%
+  filter(date_week >=ymd(pandemic_start) & date_week <= ymd(pandemic_end))  %>%
   filter(!Gemeinde_Name=="Gstaad") %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk") %>%
   filter(!Gemeinde_Name=="Wengen") %>%
@@ -67,15 +67,30 @@ data_inc <- data_bern %>%
 
 if(Type=="Regression") {
 # poisson2 <- glm(Sum_date ~ TB_mor+offset(log(Population)),data = data_inc,  family=poisson)
-glmNB <- glm.nb(Sum_date ~  HöheüM+offset(log(Population)),data = data_inc, link = "log")
-summary(glmNB)
+
+glmNB_r <-  robmixglm(Sum_date ~  HöheüM+offset(log(Population)),data = data_inc, family="nbinom")
+summary(glmNB_r)
+
+est <-round(coef(glmNB_r)[2],6)
+se <- round(coefficients(summary(glmNB_r))[2,2],6)
+Cl <- est - 1.96*se
+Cu <- est + 1.96*se
+
+res <- data.frame(Pandemic=Pandemic_Name,est=est, Cl=Cl, Cu=Cu) %>%
+  mutate(Var = row.names(.))%>%
+  remove_rownames(.) %>%
+  select(Pandemic, Var, est, Cl, Cu) 
+return(res)
+
+
 }
 
 else if(Type=="Figure") {
 plot_co <- ggplot(data=data_inc) +
   geom_point(aes(x=  HöheüM, y= Sum_Inc), lwd=lwd_size_points ) +
-  geom_smooth(aes(x=  HöheüM,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
-  ggtitle(" Relation Altitude vs Influenza")+
+  geom_smooth(aes(x=  HöheüM,y= Sum_Inc),  method='rlm',se=TRUE,lwd=lwd_size, col=col_line) +
+  # ggtitle(" Relation Altitude vs Influenza")+
+  ggtitle(Pandemic_Name)+
   ylab("Incidence per 1'000 inhabitants")+
   xlab("Altitude in meters") +
   theme_bw() +

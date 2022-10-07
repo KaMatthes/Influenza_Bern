@@ -24,11 +24,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Maps - Municipalities
 * calculated only  for pandemic times:
-  + 28.06.1918 - 20.06.1919
-  + 09.01.1920 - 18.06.1920
-  + 06.01.1922 - 21.04.1922
-  + 04.01.1924 - 06.06.1924
-  + b1.11.1924 - 08.05.1925
+  + 21.06.1918 - 20.09.1918
+  + 27.09.1918 - 20.06.1919
+  + 02.01.1920 - 18.06.1920
+  + 23.12.1921 - 05.05.1922
+  + 11.01.1924 - 30.05.1924
+  + 12.12.1924 - 08.05.1925
 * Incidence:
   + breaks: Jenks Natural Breaks - finds the "best" way to split up the ranges.
   + natural breaks minimizes the variation within each color, so the areas within each color are as close as possible in value to each other
@@ -42,23 +43,27 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Co-factors for Pandemic 1918/1919
 
-* sum of all cases per municipality
+* sum of all cases per municipality for 1918 and 1919
 * Incidence per 1'000 inhabitants
-* Negative binomial regression to avoid over dispersion
-* bivariate maps
-<\br>
-<\br>
+* Robust negative binomial regression to avoid over dispersion and to account for outliers.
+
+<!-- * bivariate maps -->
+
+<br />
+<br />
+
 The following co-factors were considered:
-<\br>
-* Population Density
+
+* Population density
 * Altitude
-* Precipitation -> However,altitude and precipitation are highly correlated. There is a significant interaction between altitude and precipitation. For that reason I would take only the altitude as co-factor for the total number of cases 1918/1919
+* Precipitation (rain and snow from July 1918 through December 1919 ) -> However,altitude and precipitation are highly correlated. There is a significant interaction between altitude and precipitation. For that reason I would take only the altitude as co-factor for the total number of cases 1918/1919
 * TB death
 * Proportion of people working in agriculture and industry, I would take only one (same result only opposite)
 * Proportion of  "Betriebe", "Anzahl Arbeiter in den Betriebe", "PS". 194 municipalities does not have any Betriebe
+* Urbanity, only 3 cities -> not possible to use with this classification
 
-
-* Urbanity, only 3 cities -> not possible with this classification
+<!-- For bivarite map clustering "quantile" clustering was used for population density, altitude, precipitation, tb death and proportion of people working in industry and agriculture. -->
+<!-- Since  "Betriebe", "Anzahl Arbeiter in den Betriebe" and "PS" have a lot of zeros (no Beriebe) "quantile" clustering is not possible, therefor "jenks" was used. -->
 
 # Canton Bern
 
@@ -78,49 +83,49 @@ knitr::include_graphics("../data/Map_Bern_Regions.png")
 function_R_inc_plot()
 ```
 
-<!-- ## Reproductive Number -->
+<!-- <!-- ## Reproductive Number --> -->
 
-<!-- ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 120,  fig.width = 80} -->
-<!-- function_R_eff_plot() -->
-<!-- ``` -->
+<!-- <!-- ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 120,  fig.width = 80} --> -->
+<!-- <!-- function_R_eff_plot() --> -->
+<!-- <!-- ``` --> -->
 
 # Municipality
 ## 1918 First wave
 
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1918-06-28",  pandemic_end="1918-09-20", Pandemic_Name="1918 first wave")
-function_hotspot_wave(pandemic_start="1918-06-28",  pandemic_end="1918-09-20", Pandemic_Name="1918 first wave")
+function_plot_maps(pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_hotspot_wave(pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
 ```
 
 ## 1918-1919 second wave
 
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1918-09-27",  pandemic_end="1919-06-20", Pandemic_Name="1918-1919 second wave")
-function_hotspot_wave(pandemic_start="1918-09-27",  pandemic_end="1919-06-20", Pandemic_Name="1918-1919 second wave")
+function_plot_maps(pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_hotspot_wave(pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
 ```
 
 ## 1920
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1920-01-09",  pandemic_end="1920-06-18", Pandemic_Name="1920")
-function_hotspot_wave(pandemic_start="1920-01-09",  pandemic_end="1920-06-18", Pandemic_Name="1920")
+function_plot_maps(pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+function_hotspot_wave(pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
 
 ## 1922
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1922-01-06",  pandemic_end="1922-04-21", Pandemic_Name="1922")
-function_hotspot_wave(pandemic_start="1922-01-06",  pandemic_end="1922-04-21", Pandemic_Name="1922")
+function_plot_maps(pandemic_start=as.Date(datlim9),  pandemic_end=as.Date(datlim10), Pandemic_Name="1922")
+function_hotspot_wave(pandemic_start=as.Date(datlim9),  pandemic_end=as.Date(datlim10), Pandemic_Name="1922")
 ```
 
 ## 1924
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1924-01-04",  pandemic_end="1924-06-06", Pandemic_Name="1924")
-function_hotspot_wave(pandemic_start="1924-01-04",  pandemic_end="1924-06-06", Pandemic_Name="1924")
+function_plot_maps(pandemic_start=as.Date(datlim11),  pandemic_end=as.Date(datlim12), Pandemic_Name="1924")
+function_hotspot_wave(pandemic_start=as.Date(datlim11),  pandemic_end=as.Date(datlim12), Pandemic_Name="1924")
 ```
 
 ## End 1924 -1925
 ```{r, echo=FALSE,message=FALSE,warning = FALSE,fig.height = 30,  fig.width = 30}
-function_plot_maps(pandemic_start="1924-11-21",  pandemic_end="1925-05-08", Pandemic_Name="End 1924 - 1925")
-function_hotspot_wave(pandemic_start="1924-11-21",  pandemic_end="1925-05-08", Pandemic_Name="End 1924 - 1925")
+function_plot_maps(pandemic_start=as.Date(datlim13),  pandemic_end=as.Date(datlim14), Pandemic_Name="End 1924 - 1925")
+function_hotspot_wave(pandemic_start=as.Date(datlim13),  pandemic_end=as.Date(datlim14), Pandemic_Name="End 1924 - 1925")
 ```
 
 <!-- # Gif -->
@@ -128,157 +133,238 @@ function_hotspot_wave(pandemic_start="1924-11-21",  pandemic_end="1925-05-08", P
 <!-- knitr::include_graphics("../output/plot_animition.gif") -->
 <!-- ``` -->
 
-## Co-factors
+# Co-factors
 
-### Population density
+## Population density
 
-Municipality with a higher population density have a significant higher incidence.
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_popdensity(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_popdensity(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_popdensity(Type="Maps")
-```
-
-
-### Altitude
-
-There is a significant correlation between the altitude and the incidence. The higher the municipality, the lower the incidence.
+No evidence of a significant association between population density and incidence. However, trend that higher population density lead to higher incidence.
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_altitude(Type="Regression")
+function_popdensity(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_popdensity(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_popdensity(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
+
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_altitude(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_altitude(Type="Maps")
-```
-
-### Precipitation
-
-There is a significant correlation between Precipitation and the incidence. The more precipitation, the lower the incidence.
-Altitude and precipitation show a significant interaction. I would not show precipitation for total cases per municipility. 
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_rain(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_rain(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_rain(Type="Maps")
-```
-
-### Tuberculosis death
-
-No evidence of a significant association, but trend that high TB deaths lead to lower incidence.
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_tb(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_tb(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_tb(Type="Maps")
-```
-
-### people working in agriculture
-
-There is no evidence for a significant association between the proportion of people working in agriculture and incidence. 
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_lws(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_lws(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_lws(Type="Maps")
-```
-
-### people working in industry
-
-There is no evidence for a significant association between the proportion of people working in agriculture and incidence. 
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_gew(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_gew(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_gew(Type="Maps")
+function_popdensity(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_popdensity(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_popdensity(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
 
 
-### Industrial companies
-
-There is no evidence for a significant association between the numbers of industrual companies per 1'000 inhabitants and incidence.
-However 194 municipality does not have any industrial companies. Grouping the "companies" in two (or more groups (e.g. none, same, a lot)) give the same result.
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_betriebe(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_betriebe(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_betriebe(Type="Maps")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_popdensity(Type="Maps") -->
+<!-- ``` -->
 
 
-### Total workers
+## Altitude
 
-There is no evidence for a significant association between the numbers of workers per 1'000 inhabitants and incidence.
-However 194 municipality does not have any industrial companies. Grouping the "total workers" in two (or more groups (e.g. none, same, a lot)) give the same result. 
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_arbeiter(Type="Regression")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_arbeiter(Type="Figure")
-```
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_arbeiter(Type="Maps")
-```
-
-### PS
-
-There is no evidence for a significant association between PS per 1'000 inhabitants and incidence.
-However 194 municipality does not have any industrial companies. Grouping the "PS" in two (or more groups (e.g. none, same, a lot)) give the same result. 
+There is a significant association between the altitude and the incidence. The higher the municipality, the lower the incidence.
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_ps(Type="Regression")
+function_altitude(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_altitude(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_altitude(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_altitude(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_altitude(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_altitude(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!--  function_altitude(Type="Maps") -->
+<!-- ``` -->
+
+## Precipitation
+
+There is a significant association between precipitation and the incidence. The more precipitation, the lower the incidence.
+Altitude and precipitation show a significant interaction. I would not show precipitation for total cases per municipility.
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_rain(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_rain(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_rain(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_rain(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_rain(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_rain(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_rain(Type="Maps") -->
+<!-- ``` -->
+
+## Tuberculosis death
+
+No evidence of a significant association.
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_tb(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_tb(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_tb(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_tb(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_tb(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_tb(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_tb(Type="Maps") -->
+<!-- ``` -->
+
+## People working in agriculture
+
+First wave 1918: The higher the proportion of people working in agriculture, the lower the incidence (significant)
+<br />
+<br />
+Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in agriculture and incidence
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_lws(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_lws(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_lws(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_lws(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_lws(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_lws(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_lws(Type="Maps") -->
+<!-- ``` -->
+
+## People working in industry
+
+First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant)
+<br />
+<br />
+Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_gew(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_gew(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_gew(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_gew(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_gew(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_gew(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_gew(Type="Maps") -->
+<!-- ``` -->
+
+
+## Industrial companies
+
+First wave 1918: The higher the proportion of companies, the higher the incidence (significant)
+<br />
+<br />
+Second wave 1918/1919 and 1920: There is no evidence for a significant association between proportion of companies and incidence.
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_betriebe(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_betriebe(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_betriebe(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_betriebe(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_betriebe(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_betriebe(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+<!-- <!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} --> -->
+<!-- <!-- function_betriebe(Type="Maps") --> -->
+<!-- <!-- ``` --> -->
+
+
+## Total workers
+
+First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant)
+<br />
+<br />
+Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_ps(Type="Figure")
+function_arbeiter(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_arbeiter(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_arbeiter(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+## PS
+
+First wave 1918 and 1918/1919: There is no evidence for a significant association between PS and incidence, but positve trend.
+<br />
+<br />
+Second wave 1918/1919 and 1920: The higher the PS in industry, the higher the incidence (significant)
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_ps(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_ps(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_ps(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_ps(Type="Maps")
+function_ps(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_ps(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_ps(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
 ```
- 
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_ps(Type="Maps") -->
+<!-- ``` -->
+
+## Number of stations
+
+First wave 1918: Municipalities with at least on train station show siginificant higher incidence than municipalities without a train station
+<br />
+<br />
+Second wave 1918/1919 and 1920: There is no evidence for a significant association between train stations and incidence.
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_stations(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_stations(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_stations(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
+function_stations(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
+function_stations(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
+function_stations(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+```
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_ps(Type="Maps") -->
+<!-- ``` -->

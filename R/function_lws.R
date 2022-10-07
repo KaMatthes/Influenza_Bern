@@ -1,28 +1,28 @@
-function_lws <- function(Type) {
+function_lws <-function(Type,pandemic_start, pandemic_end,Pandemic_Name) {
 
 data_lws <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
   # rename(Gemeinde_Name = Gemeinde) %>%
   mutate( Gemeinde_Name = recode( Gemeinde_Name,"St. Beatenberg" ="Beatenberg",
                                   "St. Imier" ="St-Imier",
-                                  "G?ndlischwand"="Gr?ndlischwand",
+                                  "Gündlischwand"="Gründlischwand",
                                   "Tramelan-dessus" = "Tramelan",
                                   "Meirisberg" = "Meinisberg",
                                   "Martiswil" = "Madiswil",
                                   "Musligen" = "Merzligen",
                                   "Mettstetten" = "Mattstetten",
                                   "Seehof" = "Seedorf",
-                                  "B?ren" = "B?ren an der Aare",
-                                  "B?ren z. Hof" = "B?ren zum Hof",
+                                  "Büren" = "Büren an der Aare",
+                                  "Büren z. Hof" = "Büren zum Hof",
                                   "Tramelan-dessous" = "Tramelan",
                                   "Les Genevez" = "Genevez",
-                                  "Delsberg" = "Del?mont",
-                                  "T?scherz-Alferm?e" = "T?scherz",
+                                  "Delsberg" = "Delémont",
+                                  "Tüscherz-Alfermée" = "Tüscherz",
                                   "St. Ursanne" = "St-Ursanne",
                                   "St. Brais" = "St-Brais",
                                   "Tort" = "Port",
                                   "Niderwahlern" = "Niedermuhlern",
                                   "Thurnen" = "Kirchenthurnen",
-                                  "Valbirse" = "B?vilard",
+                                  "Valbirse" = "Bévilard",
                                   "Haute-Sorne" = "Bassecourt",
                                   "Wichtrach" = "Niederwichtrach",
                                   "Teuffenthal" = "Unterlangenegg",
@@ -33,23 +33,42 @@ data_lws <- read.csv("../data_raw/Cofactors_1918.csv", sep=";")  %>%
                                   "Les Enfers" = "Enfers",
                                   "Walliswil" = "Walliswil b. Wangen",
                                   "Belpahorn" = "Belprahon",
-                                  "B?ren" = "B?ren an der Aare",
-                                  "Busswil" = "Busswil b. B?ren",
-                                  "Busswil bei B?ren" = "Busswil b. B?ren",
+                                  "Büren" = "Büren an der Aare",
+                                  "Busswil" = "Busswil b. Büren",
+                                  "Busswil bei Büren" = "Busswil b. Büren",
                                   "Busswil bei Melchnau" = "Busswil b. Melchnau",
                                   "Les Enfers" = "Enfers",
                                   "Niederried bei Interlaken" ="Niederried b. Interlaken",
                                   "Niederried bei Kallnach" = "Niederried b. Kallnach",
-                                  "Oberwil" = "Oberwil b. B?ren",
-                                  "Oberwil bei B?ren" = "Oberwil b. B?ren",
-                                  "R?thenbach bei Herzogenbuchsee" = "R?thenbach im Emmenthal",
-                                  "R?ti" = "R?ti b. B?ren")) %>%
+                                  "La Ferrière" = "Courtelary",
+                                  "Montignez" = "Buix",
+                                  "Niderwichtrach" = "Niederwichtrach",
+                                  "Les Genevez" = "Genevez",
+                                  "Oberwil" = "Oberwil b. Büren",
+                                  "Langnau i. E." = "Langnau",
+                                  "Büren a. A." = "Büren an der Aare",
+                                  "Oberwil bei Büren" = "Oberwil b. Büren",
+                                  "Busswil b. B." ="Busswil b. Büren",
+                                  "Herbligen" ="Steffisburg",
+                                  "Oberried a. Brienzersee" = "Oberried",
+                                  "Wangen a. A." ="Wangen",
+                                  "Stalden i. E." = "Stalden",
+                                  "Tramelan-Dessous" ="Tramelan",
+                                  "Herbligen" ="Steffisburg",
+                                  "Tramelan-Dessus" ="Tramelan",
+                                  "Porrentruy" = "Pruntrut",
+                                  "Sonviller" = "Sonvilier",
+                                  "Sonceboz-Sombeval" = "Sonceboz",
+                                  "Les Pommerals" ="Saignelégier",
+                                  "Mallcray" =  "Malleray",
+                                  "Röthenbach bei Herzogenbuchsee" = "Röthenbach im Emmenthal",
+                                  "Rüti" = "Rüti b. Büren")) %>%
   select(GEM_ID,Gemeinde_Name, LWS) 
 
 load("../data/data_bern.RData")
 
 data_inc <- data_bern %>%
-  filter(Year==1918 | Year==1919) %>%
+  filter(date_week >=ymd(pandemic_start) & date_week <= ymd(pandemic_end))  %>%
   filter(!Gemeinde_Name=="Gstaad") %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk") %>%
   filter(!Gemeinde_Name=="Wengen") %>%
@@ -62,19 +81,34 @@ data_inc <- data_bern %>%
   left_join(data_lws) %>%
   mutate(Sum_Inc =Sum_date/Population*1000,
          Lws_prop = LWS/Population*100,
+         Lws_prop = ifelse(Lws_prop>70, 55, Lws_prop),
          GEM_ID = as.character(GEM_ID)) 
 
 if(Type=="Regression") {
 # poisson2 <- glm(Sum_date ~ TB_mor+offset(log(Population)),data = data_inc,  family=poisson)
-glmNB <- glm.nb(Sum_date ~  Lws_prop+offset(log(Population)),data = data_inc, link = "log")
-summary(glmNB)
+glmNB_r <-  robmixglm(Sum_date ~   Lws_prop+offset(log(Population)),data = data_inc, family="nbinom")
+summary(glmNB_r)
+
+est <-round(coef(glmNB_r)[2],6)
+se <- round(coefficients(summary(glmNB_r))[2,2],6)
+Cl <- est - 1.96*se
+Cu <- est + 1.96*se
+res <- data.frame(Pandemic=Pandemic_Name,est=est, Cl=Cl, Cu=Cu) %>%
+  mutate(Var = row.names(.))%>%
+  remove_rownames(.) %>%
+  select(Pandemic, Var, est, Cl, Cu) 
+return(res)
+
+
+
 }
 
 else if(Type=="Figure") {
   plot_co <- ggplot(data=data_inc) +
     geom_point(aes(x= Lws_prop, y= Sum_Inc), lwd=lwd_size_points ) +
-    geom_smooth(aes(x= Lws_prop,y= Sum_Inc),  method='lm',se=TRUE,lwd=lwd_size, col=col_line) +
-    ggtitle("Relation Working in agriculture vs Influenza")+
+    geom_smooth(aes(x= Lws_prop,y= Sum_Inc),  method='rlm',se=TRUE,lwd=lwd_size, col=col_line) +
+    # ggtitle("Relation Working in agriculture vs Influenza")+
+    ggtitle(Pandemic_Name)+
     ylab("Incidence per 1'000 inhabitants")+
     xlab("Proportion of people working in agriculture") +
     theme_bw() +
