@@ -148,6 +148,7 @@ source("R/function_betriebe.R")
 source("R/function_arbeiter.R")
 source("R/function_ps.R")
 source("R/function_stations.R")
+source("R/Regression_Models.R")
 
 # render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))
 # render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))

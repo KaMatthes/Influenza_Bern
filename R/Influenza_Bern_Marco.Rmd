@@ -135,15 +135,34 @@ function_hotspot_wave(pandemic_start=as.Date(datlim13),  pandemic_end=as.Date(da
 
 # Co-factors
 
-## Population density
-
-No evidence of a significant association between population density and incidence. However, trend that higher population density lead to higher incidence.
+## 1918 First Wave
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_popdensity(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_popdensity(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_popdensity(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
+function_regression(pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2))
 ```
+
+## 1918/1919 second wave
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_regression(pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6))
+```
+
+## 1920
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+function_regression(pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8))
+```
+
+## Population density
+
+<!-- No evidence of a significant association between population density and incidence. However, trend that higher population density lead to higher incidence. -->
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_popdensity(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_popdensity(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_popdensity(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -160,14 +179,14 @@ function_popdensity(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end
 
 ## Altitude
 
-There is a significant association between the altitude and the incidence. The higher the municipality, the lower the incidence.
+<!-- There is a significant association between the altitude and the incidence. The higher the municipality, the lower the incidence. -->
 
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_altitude(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_altitude(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_altitude(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_altitude(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_altitude(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_altitude(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -181,24 +200,24 @@ function_altitude(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=a
 <!--  function_altitude(Type="Maps") -->
 <!-- ``` -->
 
-## Precipitation
+<!-- ## Precipitation -->
 
-There is a significant association between precipitation and the incidence. The more precipitation, the lower the incidence.
-Altitude and precipitation show a significant interaction. I would not show precipitation for total cases per municipility.
-
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_rain(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_rain(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_rain(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- There is a significant association between precipitation and the incidence. The more precipitation, the lower the incidence. -->
+<!-- Altitude and precipitation show a significant interaction. I would not show precipitation for total cases per municipility. -->
 
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
-function_rain(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_rain(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_rain(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- <!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} --> -->
+<!-- <!-- function_rain(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") --> -->
+<!-- <!-- function_rain(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") --> -->
+<!-- <!-- function_rain(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") --> -->
+<!-- <!-- ``` --> -->
+
+
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
+<!-- function_rain(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_rain(Type="Figure",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_rain(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 <!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12} -->
@@ -207,13 +226,13 @@ function_rain(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Da
 
 ## Tuberculosis death
 
-No evidence of a significant association.
+<!-- No evidence of a significant association. -->
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_tb(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_tb(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_tb(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_tb(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_tb(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_tb(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -229,16 +248,16 @@ function_tb(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date
 
 ## People working in agriculture
 
-First wave 1918: The higher the proportion of people working in agriculture, the lower the incidence (significant)
-<br />
-<br />
-Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in agriculture and incidence
+<!-- First wave 1918: The higher the proportion of people working in agriculture, the lower the incidence (significant) -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in agriculture and incidence -->
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_lws(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_lws(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_lws(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_lws(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_lws(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_lws(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -253,17 +272,17 @@ function_lws(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Dat
 
 ## People working in industry
 
-First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant)
-<br />
-<br />
-Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence
+<!-- First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant) -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence -->
 
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_gew(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_gew(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_gew(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_gew(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_gew(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_gew(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -279,17 +298,17 @@ function_gew(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Dat
 
 ## Industrial companies
 
-First wave 1918: The higher the proportion of companies, the higher the incidence (significant)
-<br />
-<br />
-Second wave 1918/1919 and 1920: There is no evidence for a significant association between proportion of companies and incidence.
+<!-- First wave 1918: The higher the proportion of companies, the higher the incidence (significant) -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: There is no evidence for a significant association between proportion of companies and incidence. -->
 
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_betriebe(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_betriebe(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_betriebe(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_betriebe(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_betriebe(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_betriebe(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
@@ -305,17 +324,17 @@ function_betriebe(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=a
 
 ## Total workers
 
-First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant)
-<br />
-<br />
-Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence
+<!-- First wave 1918: The higher the proportion of people working in industry, the higher the incidence (significant) -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: There is no evidence for a significant association between the proportion of people working in industry  and incidence -->
 
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_arbeiter(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
 function_arbeiter(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
@@ -325,16 +344,16 @@ function_arbeiter(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=a
 
 ## PS
 
-First wave 1918 and 1918/1919: There is no evidence for a significant association between PS and incidence, but positve trend.
-<br />
-<br />
-Second wave 1918/1919 and 1920: The higher the PS in industry, the higher the incidence (significant)
+<!-- First wave 1918 and 1918/1919: There is no evidence for a significant association between PS and incidence, but positve trend. -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: The higher the PS in industry, the higher the incidence (significant) -->
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_ps(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_ps(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_ps(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- <!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} --> -->
+<!-- <!-- function_ps(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") --> -->
+<!-- <!-- function_ps(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") --> -->
+<!-- function_ps(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
 function_ps(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
@@ -348,16 +367,16 @@ function_ps(Type="Figure",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date
 
 ## Number of stations
 
-First wave 1918: Municipalities with at least on train station show siginificant higher incidence than municipalities without a train station
-<br />
-<br />
-Second wave 1918/1919 and 1920: There is no evidence for a significant association between train stations and incidence.
+<!-- First wave 1918: Municipalities with at least on train station show siginificant higher incidence than municipalities without a train station -->
+<!-- <br /> -->
+<!-- <br /> -->
+<!-- Second wave 1918/1919 and 1920: There is no evidence for a significant association between train stations and incidence. -->
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-function_stations(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
-function_stations(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave")
-function_stations(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920")
-```
+<!-- ```{r, echo=FALSE,message=FALSE,warning=FALSE} -->
+<!-- function_stations(Type="Regression",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave") -->
+<!-- function_stations(Type="Regression",pandemic_start=as.Date(datlim3),  pandemic_end=as.Date(datlim6), Pandemic_Name="1918-1919 second wave") -->
+<!-- function_stations(Type="Regression",pandemic_start=as.Date(datlim7),  pandemic_end=as.Date(datlim8), Pandemic_Name="1920") -->
+<!-- ``` -->
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.height = 10,  fig.width = 12}
 function_stations(Type="Figure",pandemic_start=as.Date(datlim1),  pandemic_end=as.Date(datlim2), Pandemic_Name="1918 first wave")
