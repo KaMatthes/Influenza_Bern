@@ -56,25 +56,35 @@ conflict_prefer("arrange", "dplyr")
 no_classes_map <-5
 col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
 col8viridis <- viridis(8, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
-colAnnals<- c("#477DB5","black","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4","black","#84243D")
+# colAnnals<- c("#477DB5","black","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4","black","#84243D")
+
+colAnnals_fill <- c("#477DB5","grey30","#BAD2BA","#C46263","#FDF8D7","grey30","#7AABA4","grey30","#84243D")
+colAnnals_col <- c("#477DB5","grey70","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4","black","#84243D")
 
 
-text_size <-80
-strip_text <- 80
+text_size <-20
+lwd_date <- 2
+lwdline <- 2
+
+strip_text <- 20
 size_axis_title <- 20
-lwd_size_stillbirth <- 5
+legend_size <- 15
+legend_size_map <- 1
+legend_size_title <- 1.3
+main_size_map <- 1.5
+
 lwd_size <- 0.8
 pch_type <- 19
-lwdline <- 6
-lwd_date <- 4
+
+
 size_legend <- 15
 size_legend_title<- 15
 pd <-position_dodge(width=0.8)
 plot_title <- 25
 line_type <-  "solid"
-legend_size_map <- 3
-legend_title_map <- 4
-main_size_map <- 5
+
+# legend_title_map <- 4
+
 lwd_size_points  <- 3
 lwd_size <- 1.5
 
@@ -83,18 +93,19 @@ lwd_size <- 1.5
 axix_size_legend <- 6
 axis_size  <- 15
 axis_size_title  <- 15
-legend_size <- 15
+
 legend_size_title <- 15
 size_title <- 15
 # legend_size_map <-1
-panel_size_map <- 1.5
-legend_size_title_map <- 1.5
+# panel_size_map <- 1.5
+
 plot_title_size <- 15
 
 
 
 lims1 <- as.POSIXct(ymd("1918-01-04"))    
-lims2 <- as.POSIXct(ymd("1925-12-25"))   
+lims2 <- as.POSIXct(ymd("1924-12-25"))
+# lims2 <- as.POSIXct(ymd("1925-12-25"))   
 
 
 datlim1 <- as.POSIXct(ymd("1918-06-21"))

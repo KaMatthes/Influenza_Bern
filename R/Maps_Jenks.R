@@ -1,5 +1,5 @@
 function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
-  load("../data/data_bern.RData")
+  load("data/data_bern.RData")
 
   data_region <- data_bern %>%
     ungroup() %>%
@@ -21,7 +21,7 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
     mutate(Sum_Inc =Sum_date/Population*1000)
   
 # sf::sf_use_s2(TRUE)
-  bezirk_geo <- read_sf("../data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
+  bezirk_geo <- read_sf("data_raw/Gemeindegeometrie/Gemeinden_BE_1918.shp") %>%
     mutate(GEM_ID = ifelse(Gemeinde=="MATTEN BEI INTERLAKEN", "243", GEM_ID)) %>%
     filter(!is.na(GEM_ID)) %>%
     mutate(GEM_ID = as.character(GEM_ID)) %>%
@@ -33,6 +33,12 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
   
   
   data_maps <- st_as_sf(bezirk_geo)
+  
+  cita <- data.frame(city=c("Thun", "Biel","Bern"),
+                     long = c( 614620,   585443,  600670),
+                     lat = c(178664, 220664,199655))
+  
+  cita_sf = st_as_sf(cita, coords = c('long', 'lat'), crs = st_crs(data_maps)$proj4string)
 
   plot_maps <- tm_shape( data_maps ) + 
     tm_fill("Sum_Inc",
@@ -42,14 +48,18 @@ function_plot_maps <- function(pandemic_start, pandemic_end, Pandemic_Name) {
             # style = "kmeans",
             title = "Incidence") +
     tm_borders(alpha = 0.5)+
+    tm_shape(cita_sf) +
+    tm_dots(size = 0.5) +
+    tm_text("city",size = 1.3, just = "top", ymod=0.8)+
   tm_layout(
-    main.title = "Incidence per 1'000 inhabitants",
+    # main.title = "Incidence per 1'000 inhabitants",
+    main.title = Pandemic_Name,
     main.title.position = "left",
     legend.text.size = legend_size_map,
     # legend.width = 5,
     # legend.height = 8,
-    legend.position = c(0.7,0.8),
-    legend.title.size=legend_size_map,
+    legend.position = c(0.7,0.6),
+    legend.title.size=legend_size_title,
     main.title.size = main_size_map)
 
 return(  plot_maps)

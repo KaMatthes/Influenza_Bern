@@ -1,9 +1,10 @@
 function_R_inc_plot<- function() {
   
-  load("../data/data_bern.RData")
+  load("data/data_bern.RData")
 
 data_region <- data_bern %>%
   filter(!Gemeinde_Name=="ganzer Amtsbezirk")%>%
+  filter(!Year==1925) %>%
   mutate(Region_Name = ifelse(Region_Name=="Mittelland Bern" & Gemeinde_Name =="Bern", "Bern", Region_Name),
          Region_Name = ifelse(Region_Name=="Voralpen" & Gemeinde_Name =="Thun", "Thun", Region_Name),
          Region_Name = ifelse(Region_Name=="Seeland" & Gemeinde_Name =="Biel", "Biel", Region_Name),
@@ -40,31 +41,37 @@ data_region <- data_bern %>%
           Region_Name = factor(Region_Name, 
                                levels = c("Jura","City of Biel","Seeland","Oberaargau","Mittelland","City of Bern","Voralpen","City of Thun","Oberland")))
 
-plot_inc <- ggplot(data=data_region) +
-  geom_vline(xintercept=datlim1, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim3, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim5, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim7, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim9, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim11, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_vline(xintercept=datlim13, col="grey", linetype = line_type, lwd=lwd_date)+
-  geom_bar(aes(x = as.POSIXct(date_week), y = NumInc, fill=Region_Name),stat="identity") +
+plot_inc_regions <- ggplot(data=data_region) +
+  # geom_vline(xintercept=datlim1, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim3, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim5, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim7, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim9, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim11, col="grey", linetype = line_type, lwd=lwd_date)+
+  # geom_vline(xintercept=datlim13, col="grey", linetype = line_type, lwd=lwd_date)+
+  geom_bar(aes(x = as.POSIXct(date_week), y = NumInc, fill=Region_Name),alpha=0.5,stat="identity") +
   geom_line(aes(x = as.POSIXct(date_week), y = roll_inc, col=Region_Name), lwd = lwdline) +
-  xlab("")+
-  ylab("per 1,000 inhab.")+
   facet_wrap(Region_Name~., ncol=1) +
+  xlab("")+
+  ylab("Incidence per 1'000 inhabitants")+
   scale_x_datetime( breaks = date_breaks("6 month"), 
                     labels = label_date_short(),
                     limits =c(min(lims1), max(lims2)),
                     expand = c(0,0)) +
-  scale_color_manual(values=colAnnals)+
-  scale_fill_manual(values=colAnnals)+
-  theme_bw()+
+  scale_color_manual(values=colAnnals_fill)+
+  scale_fill_manual(values=colAnnals_fill)+
   theme_bw()+
   theme(axis.text = element_text(size=text_size),
         axis.title = element_text(size=text_size),
+        plot.title = element_text(size = plot_title),
+        legend.text=element_text(size=legend_size),
+        legend.title =element_text(size=legend_size),
         strip.text= element_text(colour ="black",size=strip_text,face="bold"),
+        strip.background = element_rect(colour="black", fill="white"),
         legend.position = "none")
+
+
+cowplot::save_plot("output/Figure_Incidence_regions.pdf",plot_inc_regions ,base_height=25,base_width=15)
 
 return(plot_inc)
 
