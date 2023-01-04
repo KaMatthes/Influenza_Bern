@@ -54,12 +54,9 @@ conflict_prefer("summarise", "dplyr")
 conflict_prefer("arrange", "dplyr")
 
 no_classes_map <-5
-col5viridis <- viridis(5, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
-col8viridis <- viridis(8, alpha = 1, begin = 1, end = 0, direction = 1, option = "viridis")
-# colAnnals<- c("#477DB5","black","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4","black","#84243D")
 
-colAnnals_fill <- c("#477DB5","grey30","#BAD2BA","#C46263","#FDF8D7","grey30","#7AABA4","grey30","#84243D")
-colAnnals_col <- c("#477DB5","grey70","#BAD2BA","#C46263","#FDF8D7","black","#7AABA4","black","#84243D")
+colAnnals_fill <- c("#477DB5","grey30","#BAD2BA","#C46263","#e0c943","grey30","#7AABA4","grey30","#84243D")
+colAnnals_col <- c("#477DB5","grey70","#BAD2BA","#C46263","#e0c943","black","#7AABA4","black","#84243D")
 
 
 text_size <-20
@@ -102,7 +99,6 @@ size_title <- 15
 plot_title_size <- 15
 
 
-
 lims1 <- as.POSIXct(ymd("1918-01-04"))    
 lims2 <- as.POSIXct(ymd("1924-12-25"))
 # lims2 <- as.POSIXct(ymd("1925-12-25"))   
@@ -130,38 +126,13 @@ datlim13 <- as.POSIXct(ymd("1924-12-12"))
 datlim14 <- as.POSIXct(ymd("1925-05-08"))
 
 
+source("R/data_preparation.R")
 
-# Parameter R effective
+source("R/Figure2.R")
+source("R/Figure3.R")
+source("R/function_maps_jenks.R")
+source("R/function_maps_hotspots.R")
+source("R/Figure4.R")
+source("R/function_regression.R")
+source("R/Table2.R")
 
-mean_serial_interval <- 1.00001
-std_serial_interval <- 1
-# load R sources
-# 
-# source("R/maps.R")
-# source("R/maps_all.R")
-# source("R/maps_wave.R")
-# source("R/Hotspots_wave.R")
-# source("R/Hotspots_year.R")
-
-source("R/Plot_inc_total.R")
-source("R/Plot_R_total.R")
-source("R/Plot_inc_regions.R")
-source("R/Plot_R_regions.R")
-source("R/Hotspots_wave_regions.R")
-source("R/Maps_Jenks.R")
-source("R/function_popdensity.R")
-source("R/function_altitude.R")
-source("R/function_rain.R")
-source("R/function_lws.R")
-source("R/function_gew.R")
-source("R/function_tb.R")
-source("R/function_betriebe.R")
-source("R/function_arbeiter.R")
-source("R/function_ps.R")
-source("R/function_stations.R")
-source("R/Regression_Models.R")
-
-# render(paste0("R/Influenza_Bern.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern.html"))
-# render(paste0("R/Influenza_Bern_Region.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Region.html"))
-
-render(paste0("R/Influenza_Bern_Marco.Rmd"), output_file = paste0("../output/",today(),"_Influenza_Bern_Marco.html"))
