@@ -1,4 +1,4 @@
-# From pandemic to endemic: Spatial-temporal patterns of influenza incidence in a Swiss canton, 1918-1924
+# From pandemic to endemic: Spatial-temporal patterns of influenza-like-illness incidence in a Swiss canton, 1918-1924
 
 ## Paper
 
