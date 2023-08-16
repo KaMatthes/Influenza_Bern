@@ -2,7 +2,10 @@
 
 ## Paper
 
-submitted
+<br >
+Bernhard M, Leuch C, Kordi M, Gruebner O, Matthes KL*, Floris J*, Staub K*, (2023) From pandemic to endemic: Spatial-temporal patterns of influenza-like illness incidence in a Swiss canton, 1918–1924. <i> Economics & Human Biology </i> https://doi.org/10.1016/j.ehb.2023.101271
+<br >
+<sub>* Equal contribution</sub>
 
 ## Data
 
